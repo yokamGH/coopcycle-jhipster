@@ -1,0 +1,92 @@
+entity Panier  {
+	dateCommande Instant required,
+    adresseLivraison String required,
+    fraisService Float required min(0),
+    netAPayer Integer min(0),
+    state State required, 
+    datePaiement Instant required,
+    methodePaiement PaymentMethod required,
+}
+
+enum State {
+	NEW, COOKING, READY, DELIVERED
+}
+
+enum PaymentMethod {
+	CB, Mastercard, Visa, Paypal, Apple Pay, Google Pay, Bitcoin, Izly, Cheque
+}
+entity Commande {
+	quantite Integer required min(0),
+    total Float min(0)
+}
+
+entity Menu {
+	nom String required, 
+    description String, 
+    prix Float required min(0)
+}
+
+entity Client {
+	prenom String, 
+    nom String required, 
+    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
+    phoneNumber String,
+    estDG Boolean,
+    estMenbreCA Boolean
+}
+
+entity Restaurateur {
+	prenom String required, 
+    nom String, 
+    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
+    phoneNumber String required, 
+    commissions Float,
+    estDG Boolean,
+    estMenbreCA Boolean 
+}
+
+entity Restaurant {
+	nom String required, 
+    description String, 
+    tags String,
+    adresse String required,
+    fraisLivraison Float required min(0),
+    heureOUverture String required,
+    heureFermeture String required, 
+    evaluation Float min(0)
+}
+
+
+entity Livreur {
+	prenom String required, 
+    nom String, 
+    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
+    phoneNumber String required, 
+    commissions Float min(0),
+    nbEtoiles Float min(0),
+    estDG Boolean,
+    estMenbreCA Boolean
+}
+
+entity Cooperative {
+	nom String required, 
+    localisation String required,
+    nbAdherents Integer min(0)
+}
+
+relationship OneToMany {
+	Client{panier} to Panier{client},
+    Panier{commande} to Commande{panier},
+    Menu{commande} to Commande{menu},
+    Restaurant{menu} to Menu{restaurant},
+    Restaurateur{restaurant} to Restaurant{restaurateur},
+    Livreur{panier} to Panier{livreur},
+    Cooperative{restaurateur} to Restaurateur{cooperative},
+    Cooperative{client} to Client{cooperative},
+    Cooperative{livreur} to Livreur{cooperative},
+}
+
+// Set service options to all classes
+service * with serviceClass
+// Pagination
+paginate Panier, Client, Restaurateur, Livreur, Menu, Restaurant with pagination
