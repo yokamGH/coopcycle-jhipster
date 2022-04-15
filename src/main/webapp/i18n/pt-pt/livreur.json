@@ -1,0 +1,33 @@
+{
+  "coopcycleApp": {
+    "livreur": {
+      "home": {
+        "title": "Livreurs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Criar novo(a) Livreur",
+        "createOrEditLabel": "Criar ou editar Livreur",
+        "notFound": "Nenhum Livreurs encontrado"
+      },
+      "created": "Um novo Livreur foi criado com o identificador {{ param }}",
+      "updated": "Livreur com identificador {{ param }} foi actualizado",
+      "deleted": "Livreur com identificador {{ param }} foi eliminado",
+      "delete": {
+        "question": "Tem a certeza que pretende eliminar o(a) Livreur {{ id }}?"
+      },
+      "detail": {
+        "title": "Livreur"
+      },
+      "id": "ID",
+      "prenom": "Prenom",
+      "nom": "Nom",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "commissions": "Commissions",
+      "nbEtoiles": "Nb Etoiles",
+      "estDG": "Est DG",
+      "estMenbreCA": "Est Menbre CA",
+      "panier": "Panier",
+      "cooperative": "Cooperative"
+    }
+  }
+}

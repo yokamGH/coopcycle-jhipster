@@ -1,0 +1,211 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-restaurant-heading" data-cy="RestaurantCreateUpdateHeading" jhiTranslate="coopcycleApp.restaurant.home.createOrEditLabel">
+        Create or edit a Restaurant
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.nom" for="field_nom">Nom</label>
+          <input type="text" class="form-control" name="nom" id="field_nom" data-cy="nom" formControlName="nom" />
+          <div *ngIf="editForm.get('nom')!.invalid && (editForm.get('nom')!.dirty || editForm.get('nom')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('nom')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.description" for="field_description">Description</label>
+          <input
+            type="text"
+            class="form-control"
+            name="description"
+            id="field_description"
+            data-cy="description"
+            formControlName="description"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.tags" for="field_tags">Tags</label>
+          <input type="text" class="form-control" name="tags" id="field_tags" data-cy="tags" formControlName="tags" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.adresse" for="field_adresse">Adresse</label>
+          <input type="text" class="form-control" name="adresse" id="field_adresse" data-cy="adresse" formControlName="adresse" />
+          <div *ngIf="editForm.get('adresse')!.invalid && (editForm.get('adresse')!.dirty || editForm.get('adresse')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('adresse')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.fraisLivraison" for="field_fraisLivraison">Frais Livraison</label>
+          <input
+            type="number"
+            class="form-control"
+            name="fraisLivraison"
+            id="field_fraisLivraison"
+            data-cy="fraisLivraison"
+            formControlName="fraisLivraison"
+          />
+          <div
+            *ngIf="
+              editForm.get('fraisLivraison')!.invalid && (editForm.get('fraisLivraison')!.dirty || editForm.get('fraisLivraison')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('fraisLivraison')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('fraisLivraison')?.errors?.min"
+              jhiTranslate="entity.validation.min"
+              [translateValues]="{ min: 0 }"
+            >
+              This field should be at least 0.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('fraisLivraison')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              This field should be a number.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.heureOUverture" for="field_heureOUverture"
+            >Heure O Uverture</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="heureOUverture"
+            id="field_heureOUverture"
+            data-cy="heureOUverture"
+            formControlName="heureOUverture"
+          />
+          <div
+            *ngIf="
+              editForm.get('heureOUverture')!.invalid && (editForm.get('heureOUverture')!.dirty || editForm.get('heureOUverture')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('heureOUverture')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.heureFermeture" for="field_heureFermeture">Heure Fermeture</label>
+          <input
+            type="text"
+            class="form-control"
+            name="heureFermeture"
+            id="field_heureFermeture"
+            data-cy="heureFermeture"
+            formControlName="heureFermeture"
+          />
+          <div
+            *ngIf="
+              editForm.get('heureFermeture')!.invalid && (editForm.get('heureFermeture')!.dirty || editForm.get('heureFermeture')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('heureFermeture')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.evaluation" for="field_evaluation">Evaluation</label>
+          <input
+            type="number"
+            class="form-control"
+            name="evaluation"
+            id="field_evaluation"
+            data-cy="evaluation"
+            formControlName="evaluation"
+          />
+          <div *ngIf="editForm.get('evaluation')!.invalid && (editForm.get('evaluation')!.dirty || editForm.get('evaluation')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('evaluation')?.errors?.min"
+              jhiTranslate="entity.validation.min"
+              [translateValues]="{ min: 0 }"
+            >
+              This field should be at least 0.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('evaluation')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              This field should be a number.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="coopcycleApp.restaurant.restaurateur" for="field_restaurateur">Restaurateur</label>
+          <select class="form-control" id="field_restaurateur" data-cy="restaurateur" name="restaurateur" formControlName="restaurateur">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="
+                restaurateurOption.id === editForm.get('restaurateur')!.value?.id ? editForm.get('restaurateur')!.value : restaurateurOption
+              "
+              *ngFor="let restaurateurOption of restaurateursSharedCollection; trackBy: trackRestaurateurById"
+            >
+              {{ restaurateurOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

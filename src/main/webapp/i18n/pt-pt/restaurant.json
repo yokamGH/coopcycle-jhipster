@@ -1,0 +1,33 @@
+{
+  "coopcycleApp": {
+    "restaurant": {
+      "home": {
+        "title": "Restaurants",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Criar novo(a) Restaurant",
+        "createOrEditLabel": "Criar ou editar Restaurant",
+        "notFound": "Nenhum Restaurants encontrado"
+      },
+      "created": "Um novo Restaurant foi criado com o identificador {{ param }}",
+      "updated": "Restaurant com identificador {{ param }} foi actualizado",
+      "deleted": "Restaurant com identificador {{ param }} foi eliminado",
+      "delete": {
+        "question": "Tem a certeza que pretende eliminar o(a) Restaurant {{ id }}?"
+      },
+      "detail": {
+        "title": "Restaurant"
+      },
+      "id": "ID",
+      "nom": "Nom",
+      "description": "Description",
+      "tags": "Tags",
+      "adresse": "Adresse",
+      "fraisLivraison": "Frais Livraison",
+      "heureOUverture": "Heure O Uverture",
+      "heureFermeture": "Heure Fermeture",
+      "evaluation": "Evaluation",
+      "menu": "Menu",
+      "restaurateur": "Restaurateur"
+    }
+  }
+}

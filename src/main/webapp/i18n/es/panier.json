@@ -1,0 +1,33 @@
+{
+  "coopcycleApp": {
+    "panier": {
+      "home": {
+        "title": "Paniers",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Panier",
+        "createOrEditLabel": "Crear o editar Panier",
+        "notFound": "Ningún Paniers encontrado"
+      },
+      "created": "Un nuevo Panier ha sido creado con el identificador {{ param }}",
+      "updated": "Un Panier ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Panier ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Panier {{ id }}?"
+      },
+      "detail": {
+        "title": "Panier"
+      },
+      "id": "ID",
+      "dateCommande": "Date Commande",
+      "adresseLivraison": "Adresse Livraison",
+      "fraisService": "Frais Service",
+      "netAPayer": "Net A Payer",
+      "state": "State",
+      "datePaiement": "Date Paiement",
+      "methodePaiement": "Methode Paiement",
+      "commande": "Commande",
+      "client": "Client",
+      "livreur": "Livreur"
+    }
+  }
+}

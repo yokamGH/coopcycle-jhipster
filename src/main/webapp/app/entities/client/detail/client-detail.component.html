@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="client">
+      <h2 data-cy="clientDetailsHeading"><span jhiTranslate="coopcycleApp.client.detail.title">Client</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ client.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.client.prenom">Prenom</span></dt>
+        <dd>
+          <span>{{ client.prenom }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.client.nom">Nom</span></dt>
+        <dd>
+          <span>{{ client.nom }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.client.email">Email</span></dt>
+        <dd>
+          <span>{{ client.email }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.client.phoneNumber">Phone Number</span></dt>
+        <dd>
+          <span>{{ client.phoneNumber }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.client.estDG">Est DG</span></dt>
+        <dd>
+          <span>{{ client.estDG }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.client.estMenbreCA">Est Menbre CA</span></dt>
+        <dd>
+          <span>{{ client.estMenbreCA }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.client.cooperative">Cooperative</span></dt>
+        <dd>
+          <div *ngIf="client.cooperative">
+            <a [routerLink]="['/cooperative', client.cooperative?.id, 'view']">{{ client.cooperative?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/client', client.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

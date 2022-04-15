@@ -1,0 +1,11 @@
+{
+  "coopcycleApp": {
+    "State": {
+      "null": "",
+      "NEW": "NEW",
+      "COOKING": "COOKING",
+      "READY": "READY",
+      "DELIVERED": "DELIVERED"
+    }
+  }
+}

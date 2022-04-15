@@ -1,0 +1,28 @@
+{
+  "coopcycleApp": {
+    "menu": {
+      "home": {
+        "title": "Menus",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Criar novo(a) Menu",
+        "createOrEditLabel": "Criar ou editar Menu",
+        "notFound": "Nenhum Menus encontrado"
+      },
+      "created": "Um novo Menu foi criado com o identificador {{ param }}",
+      "updated": "Menu com identificador {{ param }} foi actualizado",
+      "deleted": "Menu com identificador {{ param }} foi eliminado",
+      "delete": {
+        "question": "Tem a certeza que pretende eliminar o(a) Menu {{ id }}?"
+      },
+      "detail": {
+        "title": "Menu"
+      },
+      "id": "ID",
+      "nom": "Nom",
+      "description": "Description",
+      "prix": "Prix",
+      "commande": "Commande",
+      "restaurant": "Restaurant"
+    }
+  }
+}

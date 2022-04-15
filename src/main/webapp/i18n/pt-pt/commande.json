@@ -1,0 +1,27 @@
+{
+  "coopcycleApp": {
+    "commande": {
+      "home": {
+        "title": "Commandes",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Criar novo(a) Commande",
+        "createOrEditLabel": "Criar ou editar Commande",
+        "notFound": "Nenhum Commandes encontrado"
+      },
+      "created": "Um novo Commande foi criado com o identificador {{ param }}",
+      "updated": "Commande com identificador {{ param }} foi actualizado",
+      "deleted": "Commande com identificador {{ param }} foi eliminado",
+      "delete": {
+        "question": "Tem a certeza que pretende eliminar o(a) Commande {{ id }}?"
+      },
+      "detail": {
+        "title": "Commande"
+      },
+      "id": "ID",
+      "quantite": "Quantite",
+      "total": "Total",
+      "panier": "Panier",
+      "menu": "Menu"
+    }
+  }
+}

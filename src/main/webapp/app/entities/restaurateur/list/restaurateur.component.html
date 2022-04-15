@@ -1,0 +1,128 @@
+<div>
+  <h2 id="page-heading" data-cy="RestaurateurHeading">
+    <span jhiTranslate="coopcycleApp.restaurateur.home.title">Restaurateurs</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="loadPage()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="coopcycleApp.restaurateur.home.refreshListLabel">Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-restaurateur"
+        [routerLink]="['/restaurateur/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="coopcycleApp.restaurateur.home.createLabel"> Create a new Restaurateur </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="restaurateurs?.length === 0">
+    <span jhiTranslate="coopcycleApp.restaurateur.home.notFound">No restaurateurs found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="restaurateurs && restaurateurs.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="prenom">
+            <span jhiTranslate="coopcycleApp.restaurateur.prenom">Prenom</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="nom"><span jhiTranslate="coopcycleApp.restaurateur.nom">Nom</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="email">
+            <span jhiTranslate="coopcycleApp.restaurateur.email">Email</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="phoneNumber">
+            <span jhiTranslate="coopcycleApp.restaurateur.phoneNumber">Phone Number</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="commissions">
+            <span jhiTranslate="coopcycleApp.restaurateur.commissions">Commissions</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="estDG">
+            <span jhiTranslate="coopcycleApp.restaurateur.estDG">Est DG</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="estMenbreCA">
+            <span jhiTranslate="coopcycleApp.restaurateur.estMenbreCA">Est Menbre CA</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="cooperative.id">
+            <span jhiTranslate="coopcycleApp.restaurateur.cooperative">Cooperative</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let restaurateur of restaurateurs; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/restaurateur', restaurateur.id, 'view']">{{ restaurateur.id }}</a>
+          </td>
+          <td>{{ restaurateur.prenom }}</td>
+          <td>{{ restaurateur.nom }}</td>
+          <td>{{ restaurateur.email }}</td>
+          <td>{{ restaurateur.phoneNumber }}</td>
+          <td>{{ restaurateur.commissions }}</td>
+          <td>{{ restaurateur.estDG }}</td>
+          <td>{{ restaurateur.estMenbreCA }}</td>
+          <td>
+            <div *ngIf="restaurateur.cooperative">
+              <a [routerLink]="['/cooperative', restaurateur.cooperative?.id, 'view']">{{ restaurateur.cooperative?.id }}</a>
+            </div>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/restaurateur', restaurateur.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/restaurateur', restaurateur.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(restaurateur)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="restaurateurs && restaurateurs.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [(page)]="ngbPaginationPage"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="loadPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

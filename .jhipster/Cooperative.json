@@ -1,0 +1,51 @@
+{
+  "applications": "*",
+  "changelogDate": "20220415155054",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "cooperative",
+  "fields": [
+    {
+      "fieldName": "nom",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "localisation",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "nbAdherents",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "Cooperative",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "restaurateur",
+      "otherEntityRelationshipName": "cooperative",
+      "relationshipName": "restaurateur",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "client",
+      "otherEntityRelationshipName": "cooperative",
+      "relationshipName": "client",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "livreur",
+      "otherEntityRelationshipName": "cooperative",
+      "relationshipName": "livreur",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "serviceClass"
+}

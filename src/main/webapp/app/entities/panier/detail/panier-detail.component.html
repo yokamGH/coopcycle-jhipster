@@ -1,0 +1,68 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="panier">
+      <h2 data-cy="panierDetailsHeading"><span jhiTranslate="coopcycleApp.panier.detail.title">Panier</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ panier.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.dateCommande">Date Commande</span></dt>
+        <dd>
+          <span>{{ panier.dateCommande | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.adresseLivraison">Adresse Livraison</span></dt>
+        <dd>
+          <span>{{ panier.adresseLivraison }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.fraisService">Frais Service</span></dt>
+        <dd>
+          <span>{{ panier.fraisService }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.netAPayer">Net A Payer</span></dt>
+        <dd>
+          <span>{{ panier.netAPayer }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.state">State</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'coopcycleApp.State.' + panier.state }}">{{ panier.state }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.datePaiement">Date Paiement</span></dt>
+        <dd>
+          <span>{{ panier.datePaiement | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.methodePaiement">Methode Paiement</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'coopcycleApp.PaymentMethod.' + panier.methodePaiement }}">{{ panier.methodePaiement }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.client">Client</span></dt>
+        <dd>
+          <div *ngIf="panier.client">
+            <a [routerLink]="['/client', panier.client?.id, 'view']">{{ panier.client?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.panier.livreur">Livreur</span></dt>
+        <dd>
+          <div *ngIf="panier.livreur">
+            <a [routerLink]="['/livreur', panier.livreur?.id, 'view']">{{ panier.livreur?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/panier', panier.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

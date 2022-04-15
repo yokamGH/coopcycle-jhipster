@@ -1,0 +1,32 @@
+{
+  "coopcycleApp": {
+    "restaurateur": {
+      "home": {
+        "title": "Restaurateurs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Criar novo(a) Restaurateur",
+        "createOrEditLabel": "Criar ou editar Restaurateur",
+        "notFound": "Nenhum Restaurateurs encontrado"
+      },
+      "created": "Um novo Restaurateur foi criado com o identificador {{ param }}",
+      "updated": "Restaurateur com identificador {{ param }} foi actualizado",
+      "deleted": "Restaurateur com identificador {{ param }} foi eliminado",
+      "delete": {
+        "question": "Tem a certeza que pretende eliminar o(a) Restaurateur {{ id }}?"
+      },
+      "detail": {
+        "title": "Restaurateur"
+      },
+      "id": "ID",
+      "prenom": "Prenom",
+      "nom": "Nom",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "commissions": "Commissions",
+      "estDG": "Est DG",
+      "estMenbreCA": "Est Menbre CA",
+      "restaurant": "Restaurant",
+      "cooperative": "Cooperative"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="livreur">
+      <h2 data-cy="livreurDetailsHeading"><span jhiTranslate="coopcycleApp.livreur.detail.title">Livreur</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ livreur.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.prenom">Prenom</span></dt>
+        <dd>
+          <span>{{ livreur.prenom }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.nom">Nom</span></dt>
+        <dd>
+          <span>{{ livreur.nom }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.email">Email</span></dt>
+        <dd>
+          <span>{{ livreur.email }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.phoneNumber">Phone Number</span></dt>
+        <dd>
+          <span>{{ livreur.phoneNumber }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.commissions">Commissions</span></dt>
+        <dd>
+          <span>{{ livreur.commissions }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.nbEtoiles">Nb Etoiles</span></dt>
+        <dd>
+          <span>{{ livreur.nbEtoiles }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.estDG">Est DG</span></dt>
+        <dd>
+          <span>{{ livreur.estDG }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.estMenbreCA">Est Menbre CA</span></dt>
+        <dd>
+          <span>{{ livreur.estMenbreCA }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.livreur.cooperative">Cooperative</span></dt>
+        <dd>
+          <div *ngIf="livreur.cooperative">
+            <a [routerLink]="['/cooperative', livreur.cooperative?.id, 'view']">{{ livreur.cooperative?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/livreur', livreur.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

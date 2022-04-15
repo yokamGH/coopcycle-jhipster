@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="restaurateur">
+      <h2 data-cy="restaurateurDetailsHeading"><span jhiTranslate="coopcycleApp.restaurateur.detail.title">Restaurateur</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ restaurateur.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.restaurateur.prenom">Prenom</span></dt>
+        <dd>
+          <span>{{ restaurateur.prenom }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.restaurateur.nom">Nom</span></dt>
+        <dd>
+          <span>{{ restaurateur.nom }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.restaurateur.email">Email</span></dt>
+        <dd>
+          <span>{{ restaurateur.email }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.restaurateur.phoneNumber">Phone Number</span></dt>
+        <dd>
+          <span>{{ restaurateur.phoneNumber }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.restaurateur.commissions">Commissions</span></dt>
+        <dd>
+          <span>{{ restaurateur.commissions }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.restaurateur.estDG">Est DG</span></dt>
+        <dd>
+          <span>{{ restaurateur.estDG }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.restaurateur.estMenbreCA">Est Menbre CA</span></dt>
+        <dd>
+          <span>{{ restaurateur.estMenbreCA }}</span>
+        </dd>
+        <dt><span jhiTranslate="coopcycleApp.restaurateur.cooperative">Cooperative</span></dt>
+        <dd>
+          <div *ngIf="restaurateur.cooperative">
+            <a [routerLink]="['/cooperative', restaurateur.cooperative?.id, 'view']">{{ restaurateur.cooperative?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/restaurateur', restaurateur.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>
