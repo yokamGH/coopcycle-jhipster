@@ -2,6 +2,8 @@ package com.mycompany.coopcycle.service;
 
 import com.mycompany.coopcycle.domain.Restaurant;
 import com.mycompany.coopcycle.repository.RestaurantRepository;
+import com.mycompany.coopcycle.service.dto.RestaurantDTO;
+import com.mycompany.coopcycle.service.mapper.RestaurantMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,72 +23,57 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
 
-    public RestaurantService(RestaurantRepository restaurantRepository) {
+    private final RestaurantMapper restaurantMapper;
+
+    public RestaurantService(RestaurantRepository restaurantRepository, RestaurantMapper restaurantMapper) {
         this.restaurantRepository = restaurantRepository;
+        this.restaurantMapper = restaurantMapper;
     }
 
     /**
      * Save a restaurant.
      *
-     * @param restaurant the entity to save.
+     * @param restaurantDTO the entity to save.
      * @return the persisted entity.
      */
-    public Restaurant save(Restaurant restaurant) {
-        log.debug("Request to save Restaurant : {}", restaurant);
-        return restaurantRepository.save(restaurant);
+    public RestaurantDTO save(RestaurantDTO restaurantDTO) {
+        log.debug("Request to save Restaurant : {}", restaurantDTO);
+        Restaurant restaurant = restaurantMapper.toEntity(restaurantDTO);
+        restaurant = restaurantRepository.save(restaurant);
+        return restaurantMapper.toDto(restaurant);
     }
 
     /**
      * Update a restaurant.
      *
-     * @param restaurant the entity to save.
+     * @param restaurantDTO the entity to save.
      * @return the persisted entity.
      */
-    public Restaurant update(Restaurant restaurant) {
-        log.debug("Request to save Restaurant : {}", restaurant);
-        return restaurantRepository.save(restaurant);
+    public RestaurantDTO update(RestaurantDTO restaurantDTO) {
+        log.debug("Request to save Restaurant : {}", restaurantDTO);
+        Restaurant restaurant = restaurantMapper.toEntity(restaurantDTO);
+        restaurant = restaurantRepository.save(restaurant);
+        return restaurantMapper.toDto(restaurant);
     }
 
     /**
      * Partially update a restaurant.
      *
-     * @param restaurant the entity to update partially.
+     * @param restaurantDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Restaurant> partialUpdate(Restaurant restaurant) {
-        log.debug("Request to partially update Restaurant : {}", restaurant);
+    public Optional<RestaurantDTO> partialUpdate(RestaurantDTO restaurantDTO) {
+        log.debug("Request to partially update Restaurant : {}", restaurantDTO);
 
         return restaurantRepository
-            .findById(restaurant.getId())
+            .findById(restaurantDTO.getId())
             .map(existingRestaurant -> {
-                if (restaurant.getNom() != null) {
-                    existingRestaurant.setNom(restaurant.getNom());
-                }
-                if (restaurant.getDescription() != null) {
-                    existingRestaurant.setDescription(restaurant.getDescription());
-                }
-                if (restaurant.getTags() != null) {
-                    existingRestaurant.setTags(restaurant.getTags());
-                }
-                if (restaurant.getAdresse() != null) {
-                    existingRestaurant.setAdresse(restaurant.getAdresse());
-                }
-                if (restaurant.getFraisLivraison() != null) {
-                    existingRestaurant.setFraisLivraison(restaurant.getFraisLivraison());
-                }
-                if (restaurant.getHeureOUverture() != null) {
-                    existingRestaurant.setHeureOUverture(restaurant.getHeureOUverture());
-                }
-                if (restaurant.getHeureFermeture() != null) {
-                    existingRestaurant.setHeureFermeture(restaurant.getHeureFermeture());
-                }
-                if (restaurant.getEvaluation() != null) {
-                    existingRestaurant.setEvaluation(restaurant.getEvaluation());
-                }
+                restaurantMapper.partialUpdate(existingRestaurant, restaurantDTO);
 
                 return existingRestaurant;
             })
-            .map(restaurantRepository::save);
+            .map(restaurantRepository::save)
+            .map(restaurantMapper::toDto);
     }
 
     /**
@@ -96,9 +83,9 @@ public class RestaurantService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Restaurant> findAll(Pageable pageable) {
+    public Page<RestaurantDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Restaurants");
-        return restaurantRepository.findAll(pageable);
+        return restaurantRepository.findAll(pageable).map(restaurantMapper::toDto);
     }
 
     /**
@@ -108,9 +95,9 @@ public class RestaurantService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Restaurant> findOne(Long id) {
+    public Optional<RestaurantDTO> findOne(Long id) {
         log.debug("Request to get Restaurant : {}", id);
-        return restaurantRepository.findById(id);
+        return restaurantRepository.findById(id).map(restaurantMapper::toDto);
     }
 
     /**

@@ -26,7 +26,7 @@ describe('Livreur Service', () => {
       email: 'AAAAAAA',
       phoneNumber: 'AAAAAAA',
       commissions: 0,
-      nbEtoiles: 0,
+      evaluation: 0,
       estDG: false,
       estMenbreCA: false,
     };
@@ -69,7 +69,7 @@ describe('Livreur Service', () => {
           email: 'BBBBBB',
           phoneNumber: 'BBBBBB',
           commissions: 1,
-          nbEtoiles: 1,
+          evaluation: 1,
           estDG: true,
           estMenbreCA: true,
         },
@@ -91,7 +91,7 @@ describe('Livreur Service', () => {
           prenom: 'BBBBBB',
           email: 'BBBBBB',
           phoneNumber: 'BBBBBB',
-          nbEtoiles: 1,
+          evaluation: 1,
         },
         new Livreur()
       );
@@ -116,7 +116,7 @@ describe('Livreur Service', () => {
           email: 'BBBBBB',
           phoneNumber: 'BBBBBB',
           commissions: 1,
-          nbEtoiles: 1,
+          evaluation: 1,
           estDG: true,
           estMenbreCA: true,
         },

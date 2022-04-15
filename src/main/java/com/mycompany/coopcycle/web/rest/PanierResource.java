@@ -1,8 +1,8 @@
 package com.mycompany.coopcycle.web.rest;
 
-import com.mycompany.coopcycle.domain.Panier;
 import com.mycompany.coopcycle.repository.PanierRepository;
 import com.mycompany.coopcycle.service.PanierService;
+import com.mycompany.coopcycle.service.dto.PanierDTO;
 import com.mycompany.coopcycle.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,17 +51,17 @@ public class PanierResource {
     /**
      * {@code POST  /paniers} : Create a new panier.
      *
-     * @param panier the panier to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new panier, or with status {@code 400 (Bad Request)} if the panier has already an ID.
+     * @param panierDTO the panierDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new panierDTO, or with status {@code 400 (Bad Request)} if the panier has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/paniers")
-    public ResponseEntity<Panier> createPanier(@Valid @RequestBody Panier panier) throws URISyntaxException {
-        log.debug("REST request to save Panier : {}", panier);
-        if (panier.getId() != null) {
+    public ResponseEntity<PanierDTO> createPanier(@Valid @RequestBody PanierDTO panierDTO) throws URISyntaxException {
+        log.debug("REST request to save Panier : {}", panierDTO);
+        if (panierDTO.getId() != null) {
             throw new BadRequestAlertException("A new panier cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Panier result = panierService.save(panier);
+        PanierDTO result = panierService.save(panierDTO);
         return ResponseEntity
             .created(new URI("/api/paniers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -71,23 +71,23 @@ public class PanierResource {
     /**
      * {@code PUT  /paniers/:id} : Updates an existing panier.
      *
-     * @param id the id of the panier to save.
-     * @param panier the panier to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated panier,
-     * or with status {@code 400 (Bad Request)} if the panier is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the panier couldn't be updated.
+     * @param id the id of the panierDTO to save.
+     * @param panierDTO the panierDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated panierDTO,
+     * or with status {@code 400 (Bad Request)} if the panierDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the panierDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/paniers/{id}")
-    public ResponseEntity<Panier> updatePanier(
+    public ResponseEntity<PanierDTO> updatePanier(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Panier panier
+        @Valid @RequestBody PanierDTO panierDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Panier : {}, {}", id, panier);
-        if (panier.getId() == null) {
+        log.debug("REST request to update Panier : {}, {}", id, panierDTO);
+        if (panierDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, panier.getId())) {
+        if (!Objects.equals(id, panierDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -95,34 +95,34 @@ public class PanierResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Panier result = panierService.update(panier);
+        PanierDTO result = panierService.update(panierDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, panier.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, panierDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /paniers/:id} : Partial updates given fields of an existing panier, field will ignore if it is null
      *
-     * @param id the id of the panier to save.
-     * @param panier the panier to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated panier,
-     * or with status {@code 400 (Bad Request)} if the panier is not valid,
-     * or with status {@code 404 (Not Found)} if the panier is not found,
-     * or with status {@code 500 (Internal Server Error)} if the panier couldn't be updated.
+     * @param id the id of the panierDTO to save.
+     * @param panierDTO the panierDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated panierDTO,
+     * or with status {@code 400 (Bad Request)} if the panierDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the panierDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the panierDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/paniers/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Panier> partialUpdatePanier(
+    public ResponseEntity<PanierDTO> partialUpdatePanier(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Panier panier
+        @NotNull @RequestBody PanierDTO panierDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Panier partially : {}, {}", id, panier);
-        if (panier.getId() == null) {
+        log.debug("REST request to partial update Panier partially : {}, {}", id, panierDTO);
+        if (panierDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, panier.getId())) {
+        if (!Objects.equals(id, panierDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -130,11 +130,11 @@ public class PanierResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Panier> result = panierService.partialUpdate(panier);
+        Optional<PanierDTO> result = panierService.partialUpdate(panierDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, panier.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, panierDTO.getId().toString())
         );
     }
 
@@ -145,9 +145,9 @@ public class PanierResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of paniers in body.
      */
     @GetMapping("/paniers")
-    public ResponseEntity<List<Panier>> getAllPaniers(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<PanierDTO>> getAllPaniers(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Paniers");
-        Page<Panier> page = panierService.findAll(pageable);
+        Page<PanierDTO> page = panierService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -155,20 +155,20 @@ public class PanierResource {
     /**
      * {@code GET  /paniers/:id} : get the "id" panier.
      *
-     * @param id the id of the panier to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the panier, or with status {@code 404 (Not Found)}.
+     * @param id the id of the panierDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the panierDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/paniers/{id}")
-    public ResponseEntity<Panier> getPanier(@PathVariable Long id) {
+    public ResponseEntity<PanierDTO> getPanier(@PathVariable Long id) {
         log.debug("REST request to get Panier : {}", id);
-        Optional<Panier> panier = panierService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(panier);
+        Optional<PanierDTO> panierDTO = panierService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(panierDTO);
     }
 
     /**
      * {@code DELETE  /paniers/:id} : delete the "id" panier.
      *
-     * @param id the id of the panier to delete.
+     * @param id the id of the panierDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/paniers/{id}")

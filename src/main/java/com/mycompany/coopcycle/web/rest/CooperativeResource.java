@@ -1,8 +1,8 @@
 package com.mycompany.coopcycle.web.rest;
 
-import com.mycompany.coopcycle.domain.Cooperative;
 import com.mycompany.coopcycle.repository.CooperativeRepository;
 import com.mycompany.coopcycle.service.CooperativeService;
+import com.mycompany.coopcycle.service.dto.CooperativeDTO;
 import com.mycompany.coopcycle.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,17 +45,17 @@ public class CooperativeResource {
     /**
      * {@code POST  /cooperatives} : Create a new cooperative.
      *
-     * @param cooperative the cooperative to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new cooperative, or with status {@code 400 (Bad Request)} if the cooperative has already an ID.
+     * @param cooperativeDTO the cooperativeDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new cooperativeDTO, or with status {@code 400 (Bad Request)} if the cooperative has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/cooperatives")
-    public ResponseEntity<Cooperative> createCooperative(@Valid @RequestBody Cooperative cooperative) throws URISyntaxException {
-        log.debug("REST request to save Cooperative : {}", cooperative);
-        if (cooperative.getId() != null) {
+    public ResponseEntity<CooperativeDTO> createCooperative(@Valid @RequestBody CooperativeDTO cooperativeDTO) throws URISyntaxException {
+        log.debug("REST request to save Cooperative : {}", cooperativeDTO);
+        if (cooperativeDTO.getId() != null) {
             throw new BadRequestAlertException("A new cooperative cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Cooperative result = cooperativeService.save(cooperative);
+        CooperativeDTO result = cooperativeService.save(cooperativeDTO);
         return ResponseEntity
             .created(new URI("/api/cooperatives/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -65,23 +65,23 @@ public class CooperativeResource {
     /**
      * {@code PUT  /cooperatives/:id} : Updates an existing cooperative.
      *
-     * @param id the id of the cooperative to save.
-     * @param cooperative the cooperative to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated cooperative,
-     * or with status {@code 400 (Bad Request)} if the cooperative is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the cooperative couldn't be updated.
+     * @param id the id of the cooperativeDTO to save.
+     * @param cooperativeDTO the cooperativeDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated cooperativeDTO,
+     * or with status {@code 400 (Bad Request)} if the cooperativeDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the cooperativeDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/cooperatives/{id}")
-    public ResponseEntity<Cooperative> updateCooperative(
+    public ResponseEntity<CooperativeDTO> updateCooperative(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Cooperative cooperative
+        @Valid @RequestBody CooperativeDTO cooperativeDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Cooperative : {}, {}", id, cooperative);
-        if (cooperative.getId() == null) {
+        log.debug("REST request to update Cooperative : {}, {}", id, cooperativeDTO);
+        if (cooperativeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, cooperative.getId())) {
+        if (!Objects.equals(id, cooperativeDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -89,34 +89,34 @@ public class CooperativeResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Cooperative result = cooperativeService.update(cooperative);
+        CooperativeDTO result = cooperativeService.update(cooperativeDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, cooperative.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, cooperativeDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /cooperatives/:id} : Partial updates given fields of an existing cooperative, field will ignore if it is null
      *
-     * @param id the id of the cooperative to save.
-     * @param cooperative the cooperative to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated cooperative,
-     * or with status {@code 400 (Bad Request)} if the cooperative is not valid,
-     * or with status {@code 404 (Not Found)} if the cooperative is not found,
-     * or with status {@code 500 (Internal Server Error)} if the cooperative couldn't be updated.
+     * @param id the id of the cooperativeDTO to save.
+     * @param cooperativeDTO the cooperativeDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated cooperativeDTO,
+     * or with status {@code 400 (Bad Request)} if the cooperativeDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the cooperativeDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the cooperativeDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/cooperatives/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Cooperative> partialUpdateCooperative(
+    public ResponseEntity<CooperativeDTO> partialUpdateCooperative(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Cooperative cooperative
+        @NotNull @RequestBody CooperativeDTO cooperativeDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Cooperative partially : {}, {}", id, cooperative);
-        if (cooperative.getId() == null) {
+        log.debug("REST request to partial update Cooperative partially : {}, {}", id, cooperativeDTO);
+        if (cooperativeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, cooperative.getId())) {
+        if (!Objects.equals(id, cooperativeDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -124,11 +124,11 @@ public class CooperativeResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Cooperative> result = cooperativeService.partialUpdate(cooperative);
+        Optional<CooperativeDTO> result = cooperativeService.partialUpdate(cooperativeDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, cooperative.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, cooperativeDTO.getId().toString())
         );
     }
 
@@ -138,7 +138,7 @@ public class CooperativeResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of cooperatives in body.
      */
     @GetMapping("/cooperatives")
-    public List<Cooperative> getAllCooperatives() {
+    public List<CooperativeDTO> getAllCooperatives() {
         log.debug("REST request to get all Cooperatives");
         return cooperativeService.findAll();
     }
@@ -146,20 +146,20 @@ public class CooperativeResource {
     /**
      * {@code GET  /cooperatives/:id} : get the "id" cooperative.
      *
-     * @param id the id of the cooperative to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the cooperative, or with status {@code 404 (Not Found)}.
+     * @param id the id of the cooperativeDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the cooperativeDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/cooperatives/{id}")
-    public ResponseEntity<Cooperative> getCooperative(@PathVariable Long id) {
+    public ResponseEntity<CooperativeDTO> getCooperative(@PathVariable Long id) {
         log.debug("REST request to get Cooperative : {}", id);
-        Optional<Cooperative> cooperative = cooperativeService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(cooperative);
+        Optional<CooperativeDTO> cooperativeDTO = cooperativeService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(cooperativeDTO);
     }
 
     /**
      * {@code DELETE  /cooperatives/:id} : delete the "id" cooperative.
      *
-     * @param id the id of the cooperative to delete.
+     * @param id the id of the cooperativeDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/cooperatives/{id}")

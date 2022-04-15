@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.mycompany.coopcycle.IntegrationTest;
 import com.mycompany.coopcycle.domain.Commande;
 import com.mycompany.coopcycle.repository.CommandeRepository;
+import com.mycompany.coopcycle.service.dto.CommandeDTO;
+import com.mycompany.coopcycle.service.mapper.CommandeMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -43,6 +45,9 @@ class CommandeResourceIT {
 
     @Autowired
     private CommandeRepository commandeRepository;
+
+    @Autowired
+    private CommandeMapper commandeMapper;
 
     @Autowired
     private EntityManager em;
@@ -84,8 +89,9 @@ class CommandeResourceIT {
     void createCommande() throws Exception {
         int databaseSizeBeforeCreate = commandeRepository.findAll().size();
         // Create the Commande
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
         restCommandeMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(commande)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(commandeDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Commande in the database
@@ -101,12 +107,13 @@ class CommandeResourceIT {
     void createCommandeWithExistingId() throws Exception {
         // Create the Commande with an existing ID
         commande.setId(1L);
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
 
         int databaseSizeBeforeCreate = commandeRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCommandeMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(commande)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(commandeDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Commande in the database
@@ -122,9 +129,10 @@ class CommandeResourceIT {
         commande.setQuantite(null);
 
         // Create the Commande, which fails.
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
 
         restCommandeMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(commande)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(commandeDTO)))
             .andExpect(status().isBadRequest());
 
         List<Commande> commandeList = commandeRepository.findAll();
@@ -183,12 +191,13 @@ class CommandeResourceIT {
         // Disconnect from session so that the updates on updatedCommande are not directly saved in db
         em.detach(updatedCommande);
         updatedCommande.quantite(UPDATED_QUANTITE).total(UPDATED_TOTAL);
+        CommandeDTO commandeDTO = commandeMapper.toDto(updatedCommande);
 
         restCommandeMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedCommande.getId())
+                put(ENTITY_API_URL_ID, commandeDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedCommande))
+                    .content(TestUtil.convertObjectToJsonBytes(commandeDTO))
             )
             .andExpect(status().isOk());
 
@@ -206,12 +215,15 @@ class CommandeResourceIT {
         int databaseSizeBeforeUpdate = commandeRepository.findAll().size();
         commande.setId(count.incrementAndGet());
 
+        // Create the Commande
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCommandeMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, commande.getId())
+                put(ENTITY_API_URL_ID, commandeDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(commande))
+                    .content(TestUtil.convertObjectToJsonBytes(commandeDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -226,12 +238,15 @@ class CommandeResourceIT {
         int databaseSizeBeforeUpdate = commandeRepository.findAll().size();
         commande.setId(count.incrementAndGet());
 
+        // Create the Commande
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCommandeMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(commande))
+                    .content(TestUtil.convertObjectToJsonBytes(commandeDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -246,9 +261,12 @@ class CommandeResourceIT {
         int databaseSizeBeforeUpdate = commandeRepository.findAll().size();
         commande.setId(count.incrementAndGet());
 
+        // Create the Commande
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCommandeMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(commande)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(commandeDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Commande in the database
@@ -322,12 +340,15 @@ class CommandeResourceIT {
         int databaseSizeBeforeUpdate = commandeRepository.findAll().size();
         commande.setId(count.incrementAndGet());
 
+        // Create the Commande
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCommandeMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, commande.getId())
+                patch(ENTITY_API_URL_ID, commandeDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(commande))
+                    .content(TestUtil.convertObjectToJsonBytes(commandeDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -342,12 +363,15 @@ class CommandeResourceIT {
         int databaseSizeBeforeUpdate = commandeRepository.findAll().size();
         commande.setId(count.incrementAndGet());
 
+        // Create the Commande
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCommandeMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(commande))
+                    .content(TestUtil.convertObjectToJsonBytes(commandeDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -362,9 +386,14 @@ class CommandeResourceIT {
         int databaseSizeBeforeUpdate = commandeRepository.findAll().size();
         commande.setId(count.incrementAndGet());
 
+        // Create the Commande
+        CommandeDTO commandeDTO = commandeMapper.toDto(commande);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCommandeMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(commande)))
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(commandeDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Commande in the database

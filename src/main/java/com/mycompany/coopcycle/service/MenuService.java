@@ -2,6 +2,8 @@ package com.mycompany.coopcycle.service;
 
 import com.mycompany.coopcycle.domain.Menu;
 import com.mycompany.coopcycle.repository.MenuRepository;
+import com.mycompany.coopcycle.service.dto.MenuDTO;
+import com.mycompany.coopcycle.service.mapper.MenuMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,57 +23,57 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
 
-    public MenuService(MenuRepository menuRepository) {
+    private final MenuMapper menuMapper;
+
+    public MenuService(MenuRepository menuRepository, MenuMapper menuMapper) {
         this.menuRepository = menuRepository;
+        this.menuMapper = menuMapper;
     }
 
     /**
      * Save a menu.
      *
-     * @param menu the entity to save.
+     * @param menuDTO the entity to save.
      * @return the persisted entity.
      */
-    public Menu save(Menu menu) {
-        log.debug("Request to save Menu : {}", menu);
-        return menuRepository.save(menu);
+    public MenuDTO save(MenuDTO menuDTO) {
+        log.debug("Request to save Menu : {}", menuDTO);
+        Menu menu = menuMapper.toEntity(menuDTO);
+        menu = menuRepository.save(menu);
+        return menuMapper.toDto(menu);
     }
 
     /**
      * Update a menu.
      *
-     * @param menu the entity to save.
+     * @param menuDTO the entity to save.
      * @return the persisted entity.
      */
-    public Menu update(Menu menu) {
-        log.debug("Request to save Menu : {}", menu);
-        return menuRepository.save(menu);
+    public MenuDTO update(MenuDTO menuDTO) {
+        log.debug("Request to save Menu : {}", menuDTO);
+        Menu menu = menuMapper.toEntity(menuDTO);
+        menu = menuRepository.save(menu);
+        return menuMapper.toDto(menu);
     }
 
     /**
      * Partially update a menu.
      *
-     * @param menu the entity to update partially.
+     * @param menuDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Menu> partialUpdate(Menu menu) {
-        log.debug("Request to partially update Menu : {}", menu);
+    public Optional<MenuDTO> partialUpdate(MenuDTO menuDTO) {
+        log.debug("Request to partially update Menu : {}", menuDTO);
 
         return menuRepository
-            .findById(menu.getId())
+            .findById(menuDTO.getId())
             .map(existingMenu -> {
-                if (menu.getNom() != null) {
-                    existingMenu.setNom(menu.getNom());
-                }
-                if (menu.getDescription() != null) {
-                    existingMenu.setDescription(menu.getDescription());
-                }
-                if (menu.getPrix() != null) {
-                    existingMenu.setPrix(menu.getPrix());
-                }
+                menuMapper.partialUpdate(existingMenu, menuDTO);
 
                 return existingMenu;
             })
-            .map(menuRepository::save);
+            .map(menuRepository::save)
+            .map(menuMapper::toDto);
     }
 
     /**
@@ -81,9 +83,9 @@ public class MenuService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Menu> findAll(Pageable pageable) {
+    public Page<MenuDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Menus");
-        return menuRepository.findAll(pageable);
+        return menuRepository.findAll(pageable).map(menuMapper::toDto);
     }
 
     /**
@@ -93,9 +95,9 @@ public class MenuService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Menu> findOne(Long id) {
+    public Optional<MenuDTO> findOne(Long id) {
         log.debug("Request to get Menu : {}", id);
-        return menuRepository.findById(id);
+        return menuRepository.findById(id).map(menuMapper::toDto);
     }
 
     /**

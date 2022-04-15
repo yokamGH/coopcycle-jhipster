@@ -20,16 +20,16 @@
         <div class="row mb-3">
           <label class="form-label" jhiTranslate="coopcycleApp.restaurateur.prenom" for="field_prenom">Prenom</label>
           <input type="text" class="form-control" name="prenom" id="field_prenom" data-cy="prenom" formControlName="prenom" />
-          <div *ngIf="editForm.get('prenom')!.invalid && (editForm.get('prenom')!.dirty || editForm.get('prenom')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('prenom')?.errors?.required" jhiTranslate="entity.validation.required">
-              This field is required.
-            </small>
-          </div>
         </div>
 
         <div class="row mb-3">
           <label class="form-label" jhiTranslate="coopcycleApp.restaurateur.nom" for="field_nom">Nom</label>
           <input type="text" class="form-control" name="nom" id="field_nom" data-cy="nom" formControlName="nom" />
+          <div *ngIf="editForm.get('nom')!.invalid && (editForm.get('nom')!.dirty || editForm.get('nom')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('nom')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
         </div>
 
         <div class="row mb-3">
@@ -81,6 +81,23 @@
             data-cy="commissions"
             formControlName="commissions"
           />
+          <div *ngIf="editForm.get('commissions')!.invalid && (editForm.get('commissions')!.dirty || editForm.get('commissions')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('commissions')?.errors?.min"
+              jhiTranslate="entity.validation.min"
+              [translateValues]="{ min: 0 }"
+            >
+              This field should be at least 0.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('commissions')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              This field should be a number.
+            </small>
+          </div>
         </div>
 
         <div class="row mb-3">

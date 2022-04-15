@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220415155048",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "commande",
   "fields": [

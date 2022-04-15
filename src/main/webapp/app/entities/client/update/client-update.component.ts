@@ -24,7 +24,7 @@ export class ClientUpdateComponent implements OnInit {
     prenom: [],
     nom: [null, [Validators.required]],
     email: [null, [Validators.required, Validators.pattern('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')]],
-    phoneNumber: [],
+    phoneNumber: [null, []],
     estDG: [],
     estMenbreCA: [],
     cooperative: [],

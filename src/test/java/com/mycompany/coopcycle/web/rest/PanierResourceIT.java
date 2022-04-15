@@ -10,6 +10,8 @@ import com.mycompany.coopcycle.domain.Panier;
 import com.mycompany.coopcycle.domain.enumeration.PaymentMethod;
 import com.mycompany.coopcycle.domain.enumeration.State;
 import com.mycompany.coopcycle.repository.PanierRepository;
+import com.mycompany.coopcycle.service.dto.PanierDTO;
+import com.mycompany.coopcycle.service.mapper.PanierMapper;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -62,6 +64,9 @@ class PanierResourceIT {
 
     @Autowired
     private PanierRepository panierRepository;
+
+    @Autowired
+    private PanierMapper panierMapper;
 
     @Autowired
     private EntityManager em;
@@ -117,8 +122,9 @@ class PanierResourceIT {
     void createPanier() throws Exception {
         int databaseSizeBeforeCreate = panierRepository.findAll().size();
         // Create the Panier
+        PanierDTO panierDTO = panierMapper.toDto(panier);
         restPanierMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Panier in the database
@@ -139,12 +145,13 @@ class PanierResourceIT {
     void createPanierWithExistingId() throws Exception {
         // Create the Panier with an existing ID
         panier.setId(1L);
+        PanierDTO panierDTO = panierMapper.toDto(panier);
 
         int databaseSizeBeforeCreate = panierRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPanierMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Panier in the database
@@ -160,9 +167,10 @@ class PanierResourceIT {
         panier.setDateCommande(null);
 
         // Create the Panier, which fails.
+        PanierDTO panierDTO = panierMapper.toDto(panier);
 
         restPanierMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isBadRequest());
 
         List<Panier> panierList = panierRepository.findAll();
@@ -177,9 +185,10 @@ class PanierResourceIT {
         panier.setAdresseLivraison(null);
 
         // Create the Panier, which fails.
+        PanierDTO panierDTO = panierMapper.toDto(panier);
 
         restPanierMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isBadRequest());
 
         List<Panier> panierList = panierRepository.findAll();
@@ -194,9 +203,10 @@ class PanierResourceIT {
         panier.setFraisService(null);
 
         // Create the Panier, which fails.
+        PanierDTO panierDTO = panierMapper.toDto(panier);
 
         restPanierMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isBadRequest());
 
         List<Panier> panierList = panierRepository.findAll();
@@ -211,9 +221,10 @@ class PanierResourceIT {
         panier.setState(null);
 
         // Create the Panier, which fails.
+        PanierDTO panierDTO = panierMapper.toDto(panier);
 
         restPanierMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isBadRequest());
 
         List<Panier> panierList = panierRepository.findAll();
@@ -228,9 +239,10 @@ class PanierResourceIT {
         panier.setDatePaiement(null);
 
         // Create the Panier, which fails.
+        PanierDTO panierDTO = panierMapper.toDto(panier);
 
         restPanierMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isBadRequest());
 
         List<Panier> panierList = panierRepository.findAll();
@@ -245,9 +257,10 @@ class PanierResourceIT {
         panier.setMethodePaiement(null);
 
         // Create the Panier, which fails.
+        PanierDTO panierDTO = panierMapper.toDto(panier);
 
         restPanierMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isBadRequest());
 
         List<Panier> panierList = panierRepository.findAll();
@@ -323,12 +336,13 @@ class PanierResourceIT {
             .state(UPDATED_STATE)
             .datePaiement(UPDATED_DATE_PAIEMENT)
             .methodePaiement(UPDATED_METHODE_PAIEMENT);
+        PanierDTO panierDTO = panierMapper.toDto(updatedPanier);
 
         restPanierMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedPanier.getId())
+                put(ENTITY_API_URL_ID, panierDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedPanier))
+                    .content(TestUtil.convertObjectToJsonBytes(panierDTO))
             )
             .andExpect(status().isOk());
 
@@ -351,12 +365,15 @@ class PanierResourceIT {
         int databaseSizeBeforeUpdate = panierRepository.findAll().size();
         panier.setId(count.incrementAndGet());
 
+        // Create the Panier
+        PanierDTO panierDTO = panierMapper.toDto(panier);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPanierMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, panier.getId())
+                put(ENTITY_API_URL_ID, panierDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(panier))
+                    .content(TestUtil.convertObjectToJsonBytes(panierDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -371,12 +388,15 @@ class PanierResourceIT {
         int databaseSizeBeforeUpdate = panierRepository.findAll().size();
         panier.setId(count.incrementAndGet());
 
+        // Create the Panier
+        PanierDTO panierDTO = panierMapper.toDto(panier);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPanierMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(panier))
+                    .content(TestUtil.convertObjectToJsonBytes(panierDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -391,9 +411,12 @@ class PanierResourceIT {
         int databaseSizeBeforeUpdate = panierRepository.findAll().size();
         panier.setId(count.incrementAndGet());
 
+        // Create the Panier
+        PanierDTO panierDTO = panierMapper.toDto(panier);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPanierMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(panierDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Panier in the database
@@ -489,12 +512,15 @@ class PanierResourceIT {
         int databaseSizeBeforeUpdate = panierRepository.findAll().size();
         panier.setId(count.incrementAndGet());
 
+        // Create the Panier
+        PanierDTO panierDTO = panierMapper.toDto(panier);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPanierMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, panier.getId())
+                patch(ENTITY_API_URL_ID, panierDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(panier))
+                    .content(TestUtil.convertObjectToJsonBytes(panierDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -509,12 +535,15 @@ class PanierResourceIT {
         int databaseSizeBeforeUpdate = panierRepository.findAll().size();
         panier.setId(count.incrementAndGet());
 
+        // Create the Panier
+        PanierDTO panierDTO = panierMapper.toDto(panier);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPanierMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(panier))
+                    .content(TestUtil.convertObjectToJsonBytes(panierDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -529,9 +558,14 @@ class PanierResourceIT {
         int databaseSizeBeforeUpdate = panierRepository.findAll().size();
         panier.setId(count.incrementAndGet());
 
+        // Create the Panier
+        PanierDTO panierDTO = panierMapper.toDto(panier);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPanierMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(panier)))
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(panierDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Panier in the database

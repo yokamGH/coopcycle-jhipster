@@ -2,6 +2,8 @@ package com.mycompany.coopcycle.service;
 
 import com.mycompany.coopcycle.domain.Restaurateur;
 import com.mycompany.coopcycle.repository.RestaurateurRepository;
+import com.mycompany.coopcycle.service.dto.RestaurateurDTO;
+import com.mycompany.coopcycle.service.mapper.RestaurateurMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,69 +23,57 @@ public class RestaurateurService {
 
     private final RestaurateurRepository restaurateurRepository;
 
-    public RestaurateurService(RestaurateurRepository restaurateurRepository) {
+    private final RestaurateurMapper restaurateurMapper;
+
+    public RestaurateurService(RestaurateurRepository restaurateurRepository, RestaurateurMapper restaurateurMapper) {
         this.restaurateurRepository = restaurateurRepository;
+        this.restaurateurMapper = restaurateurMapper;
     }
 
     /**
      * Save a restaurateur.
      *
-     * @param restaurateur the entity to save.
+     * @param restaurateurDTO the entity to save.
      * @return the persisted entity.
      */
-    public Restaurateur save(Restaurateur restaurateur) {
-        log.debug("Request to save Restaurateur : {}", restaurateur);
-        return restaurateurRepository.save(restaurateur);
+    public RestaurateurDTO save(RestaurateurDTO restaurateurDTO) {
+        log.debug("Request to save Restaurateur : {}", restaurateurDTO);
+        Restaurateur restaurateur = restaurateurMapper.toEntity(restaurateurDTO);
+        restaurateur = restaurateurRepository.save(restaurateur);
+        return restaurateurMapper.toDto(restaurateur);
     }
 
     /**
      * Update a restaurateur.
      *
-     * @param restaurateur the entity to save.
+     * @param restaurateurDTO the entity to save.
      * @return the persisted entity.
      */
-    public Restaurateur update(Restaurateur restaurateur) {
-        log.debug("Request to save Restaurateur : {}", restaurateur);
-        return restaurateurRepository.save(restaurateur);
+    public RestaurateurDTO update(RestaurateurDTO restaurateurDTO) {
+        log.debug("Request to save Restaurateur : {}", restaurateurDTO);
+        Restaurateur restaurateur = restaurateurMapper.toEntity(restaurateurDTO);
+        restaurateur = restaurateurRepository.save(restaurateur);
+        return restaurateurMapper.toDto(restaurateur);
     }
 
     /**
      * Partially update a restaurateur.
      *
-     * @param restaurateur the entity to update partially.
+     * @param restaurateurDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Restaurateur> partialUpdate(Restaurateur restaurateur) {
-        log.debug("Request to partially update Restaurateur : {}", restaurateur);
+    public Optional<RestaurateurDTO> partialUpdate(RestaurateurDTO restaurateurDTO) {
+        log.debug("Request to partially update Restaurateur : {}", restaurateurDTO);
 
         return restaurateurRepository
-            .findById(restaurateur.getId())
+            .findById(restaurateurDTO.getId())
             .map(existingRestaurateur -> {
-                if (restaurateur.getPrenom() != null) {
-                    existingRestaurateur.setPrenom(restaurateur.getPrenom());
-                }
-                if (restaurateur.getNom() != null) {
-                    existingRestaurateur.setNom(restaurateur.getNom());
-                }
-                if (restaurateur.getEmail() != null) {
-                    existingRestaurateur.setEmail(restaurateur.getEmail());
-                }
-                if (restaurateur.getPhoneNumber() != null) {
-                    existingRestaurateur.setPhoneNumber(restaurateur.getPhoneNumber());
-                }
-                if (restaurateur.getCommissions() != null) {
-                    existingRestaurateur.setCommissions(restaurateur.getCommissions());
-                }
-                if (restaurateur.getEstDG() != null) {
-                    existingRestaurateur.setEstDG(restaurateur.getEstDG());
-                }
-                if (restaurateur.getEstMenbreCA() != null) {
-                    existingRestaurateur.setEstMenbreCA(restaurateur.getEstMenbreCA());
-                }
+                restaurateurMapper.partialUpdate(existingRestaurateur, restaurateurDTO);
 
                 return existingRestaurateur;
             })
-            .map(restaurateurRepository::save);
+            .map(restaurateurRepository::save)
+            .map(restaurateurMapper::toDto);
     }
 
     /**
@@ -93,9 +83,9 @@ public class RestaurateurService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Restaurateur> findAll(Pageable pageable) {
+    public Page<RestaurateurDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Restaurateurs");
-        return restaurateurRepository.findAll(pageable);
+        return restaurateurRepository.findAll(pageable).map(restaurateurMapper::toDto);
     }
 
     /**
@@ -105,9 +95,9 @@ public class RestaurateurService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Restaurateur> findOne(Long id) {
+    public Optional<RestaurateurDTO> findOne(Long id) {
         log.debug("Request to get Restaurateur : {}", id);
-        return restaurateurRepository.findById(id);
+        return restaurateurRepository.findById(id).map(restaurateurMapper::toDto);
     }
 
     /**

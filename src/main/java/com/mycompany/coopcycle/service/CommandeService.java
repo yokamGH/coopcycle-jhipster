@@ -2,8 +2,12 @@ package com.mycompany.coopcycle.service;
 
 import com.mycompany.coopcycle.domain.Commande;
 import com.mycompany.coopcycle.repository.CommandeRepository;
+import com.mycompany.coopcycle.service.dto.CommandeDTO;
+import com.mycompany.coopcycle.service.mapper.CommandeMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,54 +24,57 @@ public class CommandeService {
 
     private final CommandeRepository commandeRepository;
 
-    public CommandeService(CommandeRepository commandeRepository) {
+    private final CommandeMapper commandeMapper;
+
+    public CommandeService(CommandeRepository commandeRepository, CommandeMapper commandeMapper) {
         this.commandeRepository = commandeRepository;
+        this.commandeMapper = commandeMapper;
     }
 
     /**
      * Save a commande.
      *
-     * @param commande the entity to save.
+     * @param commandeDTO the entity to save.
      * @return the persisted entity.
      */
-    public Commande save(Commande commande) {
-        log.debug("Request to save Commande : {}", commande);
-        return commandeRepository.save(commande);
+    public CommandeDTO save(CommandeDTO commandeDTO) {
+        log.debug("Request to save Commande : {}", commandeDTO);
+        Commande commande = commandeMapper.toEntity(commandeDTO);
+        commande = commandeRepository.save(commande);
+        return commandeMapper.toDto(commande);
     }
 
     /**
      * Update a commande.
      *
-     * @param commande the entity to save.
+     * @param commandeDTO the entity to save.
      * @return the persisted entity.
      */
-    public Commande update(Commande commande) {
-        log.debug("Request to save Commande : {}", commande);
-        return commandeRepository.save(commande);
+    public CommandeDTO update(CommandeDTO commandeDTO) {
+        log.debug("Request to save Commande : {}", commandeDTO);
+        Commande commande = commandeMapper.toEntity(commandeDTO);
+        commande = commandeRepository.save(commande);
+        return commandeMapper.toDto(commande);
     }
 
     /**
      * Partially update a commande.
      *
-     * @param commande the entity to update partially.
+     * @param commandeDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Commande> partialUpdate(Commande commande) {
-        log.debug("Request to partially update Commande : {}", commande);
+    public Optional<CommandeDTO> partialUpdate(CommandeDTO commandeDTO) {
+        log.debug("Request to partially update Commande : {}", commandeDTO);
 
         return commandeRepository
-            .findById(commande.getId())
+            .findById(commandeDTO.getId())
             .map(existingCommande -> {
-                if (commande.getQuantite() != null) {
-                    existingCommande.setQuantite(commande.getQuantite());
-                }
-                if (commande.getTotal() != null) {
-                    existingCommande.setTotal(commande.getTotal());
-                }
+                commandeMapper.partialUpdate(existingCommande, commandeDTO);
 
                 return existingCommande;
             })
-            .map(commandeRepository::save);
+            .map(commandeRepository::save)
+            .map(commandeMapper::toDto);
     }
 
     /**
@@ -76,9 +83,9 @@ public class CommandeService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Commande> findAll() {
+    public List<CommandeDTO> findAll() {
         log.debug("Request to get all Commandes");
-        return commandeRepository.findAll();
+        return commandeRepository.findAll().stream().map(commandeMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -88,9 +95,9 @@ public class CommandeService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Commande> findOne(Long id) {
+    public Optional<CommandeDTO> findOne(Long id) {
         log.debug("Request to get Commande : {}", id);
-        return commandeRepository.findById(id);
+        return commandeRepository.findById(id).map(commandeMapper::toDto);
     }
 
     /**

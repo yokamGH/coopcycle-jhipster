@@ -21,11 +21,11 @@ export class RestaurateurUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    prenom: [null, [Validators.required]],
-    nom: [],
+    prenom: [],
+    nom: [null, [Validators.required]],
     email: [null, [Validators.required, Validators.pattern('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')]],
     phoneNumber: [null, [Validators.required]],
-    commissions: [],
+    commissions: [null, [Validators.min(0)]],
     estDG: [],
     estMenbreCA: [],
     cooperative: [],

@@ -25,20 +25,20 @@ public class Livreur implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
-    @Column(name = "prenom", nullable = false)
+    @Column(name = "prenom")
     private String prenom;
 
-    @Column(name = "nom")
+    @NotNull
+    @Column(name = "nom", nullable = false)
     private String nom;
 
     @NotNull
     @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @NotNull
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
     @DecimalMin(value = "0")
@@ -46,8 +46,8 @@ public class Livreur implements Serializable {
     private Float commissions;
 
     @DecimalMin(value = "0")
-    @Column(name = "nb_etoiles")
-    private Float nbEtoiles;
+    @Column(name = "evaluation")
+    private Float evaluation;
 
     @Column(name = "est_dg")
     private Boolean estDG;
@@ -144,17 +144,17 @@ public class Livreur implements Serializable {
         this.commissions = commissions;
     }
 
-    public Float getNbEtoiles() {
-        return this.nbEtoiles;
+    public Float getEvaluation() {
+        return this.evaluation;
     }
 
-    public Livreur nbEtoiles(Float nbEtoiles) {
-        this.setNbEtoiles(nbEtoiles);
+    public Livreur evaluation(Float evaluation) {
+        this.setEvaluation(evaluation);
         return this;
     }
 
-    public void setNbEtoiles(Float nbEtoiles) {
-        this.nbEtoiles = nbEtoiles;
+    public void setEvaluation(Float evaluation) {
+        this.evaluation = evaluation;
     }
 
     public Boolean getEstDG() {
@@ -256,7 +256,7 @@ public class Livreur implements Serializable {
             ", email='" + getEmail() + "'" +
             ", phoneNumber='" + getPhoneNumber() + "'" +
             ", commissions=" + getCommissions() +
-            ", nbEtoiles=" + getNbEtoiles() +
+            ", evaluation=" + getEvaluation() +
             ", estDG='" + getEstDG() + "'" +
             ", estMenbreCA='" + getEstMenbreCA() + "'" +
             "}";

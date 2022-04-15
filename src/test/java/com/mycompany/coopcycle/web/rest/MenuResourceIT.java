@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.mycompany.coopcycle.IntegrationTest;
 import com.mycompany.coopcycle.domain.Menu;
 import com.mycompany.coopcycle.repository.MenuRepository;
+import com.mycompany.coopcycle.service.dto.MenuDTO;
+import com.mycompany.coopcycle.service.mapper.MenuMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -46,6 +48,9 @@ class MenuResourceIT {
 
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuMapper menuMapper;
 
     @Autowired
     private EntityManager em;
@@ -87,8 +92,9 @@ class MenuResourceIT {
     void createMenu() throws Exception {
         int databaseSizeBeforeCreate = menuRepository.findAll().size();
         // Create the Menu
+        MenuDTO menuDTO = menuMapper.toDto(menu);
         restMenuMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menu)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menuDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Menu in the database
@@ -105,12 +111,13 @@ class MenuResourceIT {
     void createMenuWithExistingId() throws Exception {
         // Create the Menu with an existing ID
         menu.setId(1L);
+        MenuDTO menuDTO = menuMapper.toDto(menu);
 
         int databaseSizeBeforeCreate = menuRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restMenuMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menu)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menuDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Menu in the database
@@ -126,9 +133,10 @@ class MenuResourceIT {
         menu.setNom(null);
 
         // Create the Menu, which fails.
+        MenuDTO menuDTO = menuMapper.toDto(menu);
 
         restMenuMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menu)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menuDTO)))
             .andExpect(status().isBadRequest());
 
         List<Menu> menuList = menuRepository.findAll();
@@ -143,9 +151,10 @@ class MenuResourceIT {
         menu.setPrix(null);
 
         // Create the Menu, which fails.
+        MenuDTO menuDTO = menuMapper.toDto(menu);
 
         restMenuMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menu)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menuDTO)))
             .andExpect(status().isBadRequest());
 
         List<Menu> menuList = menuRepository.findAll();
@@ -206,12 +215,13 @@ class MenuResourceIT {
         // Disconnect from session so that the updates on updatedMenu are not directly saved in db
         em.detach(updatedMenu);
         updatedMenu.nom(UPDATED_NOM).description(UPDATED_DESCRIPTION).prix(UPDATED_PRIX);
+        MenuDTO menuDTO = menuMapper.toDto(updatedMenu);
 
         restMenuMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedMenu.getId())
+                put(ENTITY_API_URL_ID, menuDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedMenu))
+                    .content(TestUtil.convertObjectToJsonBytes(menuDTO))
             )
             .andExpect(status().isOk());
 
@@ -230,12 +240,15 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().size();
         menu.setId(count.incrementAndGet());
 
+        // Create the Menu
+        MenuDTO menuDTO = menuMapper.toDto(menu);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restMenuMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, menu.getId())
+                put(ENTITY_API_URL_ID, menuDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(menu))
+                    .content(TestUtil.convertObjectToJsonBytes(menuDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -250,12 +263,15 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().size();
         menu.setId(count.incrementAndGet());
 
+        // Create the Menu
+        MenuDTO menuDTO = menuMapper.toDto(menu);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMenuMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(menu))
+                    .content(TestUtil.convertObjectToJsonBytes(menuDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -270,9 +286,12 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().size();
         menu.setId(count.incrementAndGet());
 
+        // Create the Menu
+        MenuDTO menuDTO = menuMapper.toDto(menu);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMenuMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menu)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(menuDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Menu in the database
@@ -346,12 +365,15 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().size();
         menu.setId(count.incrementAndGet());
 
+        // Create the Menu
+        MenuDTO menuDTO = menuMapper.toDto(menu);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restMenuMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, menu.getId())
+                patch(ENTITY_API_URL_ID, menuDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(menu))
+                    .content(TestUtil.convertObjectToJsonBytes(menuDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -366,12 +388,15 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().size();
         menu.setId(count.incrementAndGet());
 
+        // Create the Menu
+        MenuDTO menuDTO = menuMapper.toDto(menu);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMenuMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(menu))
+                    .content(TestUtil.convertObjectToJsonBytes(menuDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -386,9 +411,12 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().size();
         menu.setId(count.incrementAndGet());
 
+        // Create the Menu
+        MenuDTO menuDTO = menuMapper.toDto(menu);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMenuMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(menu)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(menuDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Menu in the database

@@ -15,16 +15,16 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="prenom" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="nom" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="email" type="varchar(255)">
+            <column name="nom" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_restaurateur__email" />
+            </column>
             <column name="phone_number" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_restaurateur__phone_number" />
             </column>
             <column name="commissions" type="${floatType}">
                 <constraints nullable="true" />

@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.mycompany.coopcycle.IntegrationTest;
 import com.mycompany.coopcycle.domain.Restaurateur;
 import com.mycompany.coopcycle.repository.RestaurateurRepository;
+import com.mycompany.coopcycle.service.dto.RestaurateurDTO;
+import com.mycompany.coopcycle.service.mapper.RestaurateurMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -41,8 +43,8 @@ class RestaurateurResourceIT {
     private static final String DEFAULT_PHONE_NUMBER = "AAAAAAAAAA";
     private static final String UPDATED_PHONE_NUMBER = "BBBBBBBBBB";
 
-    private static final Float DEFAULT_COMMISSIONS = 1F;
-    private static final Float UPDATED_COMMISSIONS = 2F;
+    private static final Float DEFAULT_COMMISSIONS = 0F;
+    private static final Float UPDATED_COMMISSIONS = 1F;
 
     private static final Boolean DEFAULT_EST_DG = false;
     private static final Boolean UPDATED_EST_DG = true;
@@ -58,6 +60,9 @@ class RestaurateurResourceIT {
 
     @Autowired
     private RestaurateurRepository restaurateurRepository;
+
+    @Autowired
+    private RestaurateurMapper restaurateurMapper;
 
     @Autowired
     private EntityManager em;
@@ -113,8 +118,11 @@ class RestaurateurResourceIT {
     void createRestaurateur() throws Exception {
         int databaseSizeBeforeCreate = restaurateurRepository.findAll().size();
         // Create the Restaurateur
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
         restRestaurateurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateur)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
+            )
             .andExpect(status().isCreated());
 
         // Validate the Restaurateur in the database
@@ -135,12 +143,15 @@ class RestaurateurResourceIT {
     void createRestaurateurWithExistingId() throws Exception {
         // Create the Restaurateur with an existing ID
         restaurateur.setId(1L);
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
 
         int databaseSizeBeforeCreate = restaurateurRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restRestaurateurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateur)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Restaurateur in the database
@@ -150,15 +161,18 @@ class RestaurateurResourceIT {
 
     @Test
     @Transactional
-    void checkPrenomIsRequired() throws Exception {
+    void checkNomIsRequired() throws Exception {
         int databaseSizeBeforeTest = restaurateurRepository.findAll().size();
         // set the field null
-        restaurateur.setPrenom(null);
+        restaurateur.setNom(null);
 
         // Create the Restaurateur, which fails.
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
 
         restRestaurateurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateur)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<Restaurateur> restaurateurList = restaurateurRepository.findAll();
@@ -173,9 +187,12 @@ class RestaurateurResourceIT {
         restaurateur.setEmail(null);
 
         // Create the Restaurateur, which fails.
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
 
         restRestaurateurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateur)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<Restaurateur> restaurateurList = restaurateurRepository.findAll();
@@ -190,9 +207,12 @@ class RestaurateurResourceIT {
         restaurateur.setPhoneNumber(null);
 
         // Create the Restaurateur, which fails.
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
 
         restRestaurateurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateur)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<Restaurateur> restaurateurList = restaurateurRepository.findAll();
@@ -268,12 +288,13 @@ class RestaurateurResourceIT {
             .commissions(UPDATED_COMMISSIONS)
             .estDG(UPDATED_EST_DG)
             .estMenbreCA(UPDATED_EST_MENBRE_CA);
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(updatedRestaurateur);
 
         restRestaurateurMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedRestaurateur.getId())
+                put(ENTITY_API_URL_ID, restaurateurDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedRestaurateur))
+                    .content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
             )
             .andExpect(status().isOk());
 
@@ -296,12 +317,15 @@ class RestaurateurResourceIT {
         int databaseSizeBeforeUpdate = restaurateurRepository.findAll().size();
         restaurateur.setId(count.incrementAndGet());
 
+        // Create the Restaurateur
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRestaurateurMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, restaurateur.getId())
+                put(ENTITY_API_URL_ID, restaurateurDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(restaurateur))
+                    .content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -316,12 +340,15 @@ class RestaurateurResourceIT {
         int databaseSizeBeforeUpdate = restaurateurRepository.findAll().size();
         restaurateur.setId(count.incrementAndGet());
 
+        // Create the Restaurateur
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRestaurateurMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(restaurateur))
+                    .content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -336,9 +363,14 @@ class RestaurateurResourceIT {
         int databaseSizeBeforeUpdate = restaurateurRepository.findAll().size();
         restaurateur.setId(count.incrementAndGet());
 
+        // Create the Restaurateur
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRestaurateurMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateur)))
+            .perform(
+                put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Restaurateur in the database
@@ -433,12 +465,15 @@ class RestaurateurResourceIT {
         int databaseSizeBeforeUpdate = restaurateurRepository.findAll().size();
         restaurateur.setId(count.incrementAndGet());
 
+        // Create the Restaurateur
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRestaurateurMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, restaurateur.getId())
+                patch(ENTITY_API_URL_ID, restaurateurDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(restaurateur))
+                    .content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -453,12 +488,15 @@ class RestaurateurResourceIT {
         int databaseSizeBeforeUpdate = restaurateurRepository.findAll().size();
         restaurateur.setId(count.incrementAndGet());
 
+        // Create the Restaurateur
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRestaurateurMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(restaurateur))
+                    .content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -473,10 +511,15 @@ class RestaurateurResourceIT {
         int databaseSizeBeforeUpdate = restaurateurRepository.findAll().size();
         restaurateur.setId(count.incrementAndGet());
 
+        // Create the Restaurateur
+        RestaurateurDTO restaurateurDTO = restaurateurMapper.toDto(restaurateur);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRestaurateurMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(restaurateur))
+                patch(ENTITY_API_URL)
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(restaurateurDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

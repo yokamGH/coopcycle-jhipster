@@ -2,6 +2,8 @@ package com.mycompany.coopcycle.service;
 
 import com.mycompany.coopcycle.domain.Client;
 import com.mycompany.coopcycle.repository.ClientRepository;
+import com.mycompany.coopcycle.service.dto.ClientDTO;
+import com.mycompany.coopcycle.service.mapper.ClientMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,66 +23,57 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
 
-    public ClientService(ClientRepository clientRepository) {
+    private final ClientMapper clientMapper;
+
+    public ClientService(ClientRepository clientRepository, ClientMapper clientMapper) {
         this.clientRepository = clientRepository;
+        this.clientMapper = clientMapper;
     }
 
     /**
      * Save a client.
      *
-     * @param client the entity to save.
+     * @param clientDTO the entity to save.
      * @return the persisted entity.
      */
-    public Client save(Client client) {
-        log.debug("Request to save Client : {}", client);
-        return clientRepository.save(client);
+    public ClientDTO save(ClientDTO clientDTO) {
+        log.debug("Request to save Client : {}", clientDTO);
+        Client client = clientMapper.toEntity(clientDTO);
+        client = clientRepository.save(client);
+        return clientMapper.toDto(client);
     }
 
     /**
      * Update a client.
      *
-     * @param client the entity to save.
+     * @param clientDTO the entity to save.
      * @return the persisted entity.
      */
-    public Client update(Client client) {
-        log.debug("Request to save Client : {}", client);
-        return clientRepository.save(client);
+    public ClientDTO update(ClientDTO clientDTO) {
+        log.debug("Request to save Client : {}", clientDTO);
+        Client client = clientMapper.toEntity(clientDTO);
+        client = clientRepository.save(client);
+        return clientMapper.toDto(client);
     }
 
     /**
      * Partially update a client.
      *
-     * @param client the entity to update partially.
+     * @param clientDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Client> partialUpdate(Client client) {
-        log.debug("Request to partially update Client : {}", client);
+    public Optional<ClientDTO> partialUpdate(ClientDTO clientDTO) {
+        log.debug("Request to partially update Client : {}", clientDTO);
 
         return clientRepository
-            .findById(client.getId())
+            .findById(clientDTO.getId())
             .map(existingClient -> {
-                if (client.getPrenom() != null) {
-                    existingClient.setPrenom(client.getPrenom());
-                }
-                if (client.getNom() != null) {
-                    existingClient.setNom(client.getNom());
-                }
-                if (client.getEmail() != null) {
-                    existingClient.setEmail(client.getEmail());
-                }
-                if (client.getPhoneNumber() != null) {
-                    existingClient.setPhoneNumber(client.getPhoneNumber());
-                }
-                if (client.getEstDG() != null) {
-                    existingClient.setEstDG(client.getEstDG());
-                }
-                if (client.getEstMenbreCA() != null) {
-                    existingClient.setEstMenbreCA(client.getEstMenbreCA());
-                }
+                clientMapper.partialUpdate(existingClient, clientDTO);
 
                 return existingClient;
             })
-            .map(clientRepository::save);
+            .map(clientRepository::save)
+            .map(clientMapper::toDto);
     }
 
     /**
@@ -90,9 +83,9 @@ public class ClientService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Client> findAll(Pageable pageable) {
+    public Page<ClientDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Clients");
-        return clientRepository.findAll(pageable);
+        return clientRepository.findAll(pageable).map(clientMapper::toDto);
     }
 
     /**
@@ -102,9 +95,9 @@ public class ClientService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Client> findOne(Long id) {
+    public Optional<ClientDTO> findOne(Long id) {
         log.debug("Request to get Client : {}", id);
-        return clientRepository.findById(id);
+        return clientRepository.findById(id).map(clientMapper::toDto);
     }
 
     /**

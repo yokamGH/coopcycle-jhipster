@@ -1,29 +1,29 @@
 {
   "applications": "*",
   "changelogDate": "20220415155053",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "livreur",
   "fields": [
     {
       "fieldName": "prenom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nom",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "nom",
-      "fieldType": "String"
-    },
-    {
       "fieldName": "email",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRules": ["required", "unique", "pattern"],
       "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
     },
     {
       "fieldName": "phoneNumber",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["required", "unique"]
     },
     {
       "fieldName": "commissions",
@@ -32,7 +32,7 @@
       "fieldValidateRulesMin": "0"
     },
     {
-      "fieldName": "nbEtoiles",
+      "fieldName": "evaluation",
       "fieldType": "Float",
       "fieldValidateRules": ["min"],
       "fieldValidateRulesMin": "0"

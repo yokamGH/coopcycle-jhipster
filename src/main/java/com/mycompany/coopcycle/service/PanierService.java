@@ -2,6 +2,8 @@ package com.mycompany.coopcycle.service;
 
 import com.mycompany.coopcycle.domain.Panier;
 import com.mycompany.coopcycle.repository.PanierRepository;
+import com.mycompany.coopcycle.service.dto.PanierDTO;
+import com.mycompany.coopcycle.service.mapper.PanierMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,69 +23,57 @@ public class PanierService {
 
     private final PanierRepository panierRepository;
 
-    public PanierService(PanierRepository panierRepository) {
+    private final PanierMapper panierMapper;
+
+    public PanierService(PanierRepository panierRepository, PanierMapper panierMapper) {
         this.panierRepository = panierRepository;
+        this.panierMapper = panierMapper;
     }
 
     /**
      * Save a panier.
      *
-     * @param panier the entity to save.
+     * @param panierDTO the entity to save.
      * @return the persisted entity.
      */
-    public Panier save(Panier panier) {
-        log.debug("Request to save Panier : {}", panier);
-        return panierRepository.save(panier);
+    public PanierDTO save(PanierDTO panierDTO) {
+        log.debug("Request to save Panier : {}", panierDTO);
+        Panier panier = panierMapper.toEntity(panierDTO);
+        panier = panierRepository.save(panier);
+        return panierMapper.toDto(panier);
     }
 
     /**
      * Update a panier.
      *
-     * @param panier the entity to save.
+     * @param panierDTO the entity to save.
      * @return the persisted entity.
      */
-    public Panier update(Panier panier) {
-        log.debug("Request to save Panier : {}", panier);
-        return panierRepository.save(panier);
+    public PanierDTO update(PanierDTO panierDTO) {
+        log.debug("Request to save Panier : {}", panierDTO);
+        Panier panier = panierMapper.toEntity(panierDTO);
+        panier = panierRepository.save(panier);
+        return panierMapper.toDto(panier);
     }
 
     /**
      * Partially update a panier.
      *
-     * @param panier the entity to update partially.
+     * @param panierDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Panier> partialUpdate(Panier panier) {
-        log.debug("Request to partially update Panier : {}", panier);
+    public Optional<PanierDTO> partialUpdate(PanierDTO panierDTO) {
+        log.debug("Request to partially update Panier : {}", panierDTO);
 
         return panierRepository
-            .findById(panier.getId())
+            .findById(panierDTO.getId())
             .map(existingPanier -> {
-                if (panier.getDateCommande() != null) {
-                    existingPanier.setDateCommande(panier.getDateCommande());
-                }
-                if (panier.getAdresseLivraison() != null) {
-                    existingPanier.setAdresseLivraison(panier.getAdresseLivraison());
-                }
-                if (panier.getFraisService() != null) {
-                    existingPanier.setFraisService(panier.getFraisService());
-                }
-                if (panier.getNetAPayer() != null) {
-                    existingPanier.setNetAPayer(panier.getNetAPayer());
-                }
-                if (panier.getState() != null) {
-                    existingPanier.setState(panier.getState());
-                }
-                if (panier.getDatePaiement() != null) {
-                    existingPanier.setDatePaiement(panier.getDatePaiement());
-                }
-                if (panier.getMethodePaiement() != null) {
-                    existingPanier.setMethodePaiement(panier.getMethodePaiement());
-                }
+                panierMapper.partialUpdate(existingPanier, panierDTO);
 
                 return existingPanier;
             })
-            .map(panierRepository::save);
+            .map(panierRepository::save)
+            .map(panierMapper::toDto);
     }
 
     /**
@@ -93,9 +83,9 @@ public class PanierService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Panier> findAll(Pageable pageable) {
+    public Page<PanierDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Paniers");
-        return panierRepository.findAll(pageable);
+        return panierRepository.findAll(pageable).map(panierMapper::toDto);
     }
 
     /**
@@ -105,9 +95,9 @@ public class PanierService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Panier> findOne(Long id) {
+    public Optional<PanierDTO> findOne(Long id) {
         log.debug("Request to get Panier : {}", id);
-        return panierRepository.findById(id);
+        return panierRepository.findById(id).map(panierMapper::toDto);
     }
 
     /**

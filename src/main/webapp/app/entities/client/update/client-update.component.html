@@ -56,6 +56,9 @@
             data-cy="phoneNumber"
             formControlName="phoneNumber"
           />
+          <div
+            *ngIf="editForm.get('phoneNumber')!.invalid && (editForm.get('phoneNumber')!.dirty || editForm.get('phoneNumber')!.touched)"
+          ></div>
         </div>
 
         <div class="row mb-3">

@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.mycompany.coopcycle.IntegrationTest;
 import com.mycompany.coopcycle.domain.Cooperative;
 import com.mycompany.coopcycle.repository.CooperativeRepository;
+import com.mycompany.coopcycle.service.dto.CooperativeDTO;
+import com.mycompany.coopcycle.service.mapper.CooperativeMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -46,6 +48,9 @@ class CooperativeResourceIT {
 
     @Autowired
     private CooperativeRepository cooperativeRepository;
+
+    @Autowired
+    private CooperativeMapper cooperativeMapper;
 
     @Autowired
     private EntityManager em;
@@ -87,8 +92,11 @@ class CooperativeResourceIT {
     void createCooperative() throws Exception {
         int databaseSizeBeforeCreate = cooperativeRepository.findAll().size();
         // Create the Cooperative
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
         restCooperativeMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperative)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
+            )
             .andExpect(status().isCreated());
 
         // Validate the Cooperative in the database
@@ -105,12 +113,15 @@ class CooperativeResourceIT {
     void createCooperativeWithExistingId() throws Exception {
         // Create the Cooperative with an existing ID
         cooperative.setId(1L);
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
 
         int databaseSizeBeforeCreate = cooperativeRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCooperativeMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperative)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Cooperative in the database
@@ -126,9 +137,12 @@ class CooperativeResourceIT {
         cooperative.setNom(null);
 
         // Create the Cooperative, which fails.
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
 
         restCooperativeMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperative)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<Cooperative> cooperativeList = cooperativeRepository.findAll();
@@ -143,9 +157,12 @@ class CooperativeResourceIT {
         cooperative.setLocalisation(null);
 
         // Create the Cooperative, which fails.
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
 
         restCooperativeMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperative)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
+            )
             .andExpect(status().isBadRequest());
 
         List<Cooperative> cooperativeList = cooperativeRepository.findAll();
@@ -206,12 +223,13 @@ class CooperativeResourceIT {
         // Disconnect from session so that the updates on updatedCooperative are not directly saved in db
         em.detach(updatedCooperative);
         updatedCooperative.nom(UPDATED_NOM).localisation(UPDATED_LOCALISATION).nbAdherents(UPDATED_NB_ADHERENTS);
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(updatedCooperative);
 
         restCooperativeMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedCooperative.getId())
+                put(ENTITY_API_URL_ID, cooperativeDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedCooperative))
+                    .content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
             )
             .andExpect(status().isOk());
 
@@ -230,12 +248,15 @@ class CooperativeResourceIT {
         int databaseSizeBeforeUpdate = cooperativeRepository.findAll().size();
         cooperative.setId(count.incrementAndGet());
 
+        // Create the Cooperative
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCooperativeMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, cooperative.getId())
+                put(ENTITY_API_URL_ID, cooperativeDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(cooperative))
+                    .content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -250,12 +271,15 @@ class CooperativeResourceIT {
         int databaseSizeBeforeUpdate = cooperativeRepository.findAll().size();
         cooperative.setId(count.incrementAndGet());
 
+        // Create the Cooperative
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCooperativeMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(cooperative))
+                    .content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -270,9 +294,12 @@ class CooperativeResourceIT {
         int databaseSizeBeforeUpdate = cooperativeRepository.findAll().size();
         cooperative.setId(count.incrementAndGet());
 
+        // Create the Cooperative
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCooperativeMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperative)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cooperativeDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Cooperative in the database
@@ -348,12 +375,15 @@ class CooperativeResourceIT {
         int databaseSizeBeforeUpdate = cooperativeRepository.findAll().size();
         cooperative.setId(count.incrementAndGet());
 
+        // Create the Cooperative
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCooperativeMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, cooperative.getId())
+                patch(ENTITY_API_URL_ID, cooperativeDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(cooperative))
+                    .content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -368,12 +398,15 @@ class CooperativeResourceIT {
         int databaseSizeBeforeUpdate = cooperativeRepository.findAll().size();
         cooperative.setId(count.incrementAndGet());
 
+        // Create the Cooperative
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCooperativeMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(cooperative))
+                    .content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -388,10 +421,13 @@ class CooperativeResourceIT {
         int databaseSizeBeforeUpdate = cooperativeRepository.findAll().size();
         cooperative.setId(count.incrementAndGet());
 
+        // Create the Cooperative
+        CooperativeDTO cooperativeDTO = cooperativeMapper.toDto(cooperative);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCooperativeMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(cooperative))
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(cooperativeDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

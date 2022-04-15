@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.mycompany.coopcycle.IntegrationTest;
 import com.mycompany.coopcycle.domain.Livreur;
 import com.mycompany.coopcycle.repository.LivreurRepository;
+import com.mycompany.coopcycle.service.dto.LivreurDTO;
+import com.mycompany.coopcycle.service.mapper.LivreurMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -44,8 +46,8 @@ class LivreurResourceIT {
     private static final Float DEFAULT_COMMISSIONS = 0F;
     private static final Float UPDATED_COMMISSIONS = 1F;
 
-    private static final Float DEFAULT_NB_ETOILES = 0F;
-    private static final Float UPDATED_NB_ETOILES = 1F;
+    private static final Float DEFAULT_EVALUATION = 0F;
+    private static final Float UPDATED_EVALUATION = 1F;
 
     private static final Boolean DEFAULT_EST_DG = false;
     private static final Boolean UPDATED_EST_DG = true;
@@ -61,6 +63,9 @@ class LivreurResourceIT {
 
     @Autowired
     private LivreurRepository livreurRepository;
+
+    @Autowired
+    private LivreurMapper livreurMapper;
 
     @Autowired
     private EntityManager em;
@@ -83,7 +88,7 @@ class LivreurResourceIT {
             .email(DEFAULT_EMAIL)
             .phoneNumber(DEFAULT_PHONE_NUMBER)
             .commissions(DEFAULT_COMMISSIONS)
-            .nbEtoiles(DEFAULT_NB_ETOILES)
+            .evaluation(DEFAULT_EVALUATION)
             .estDG(DEFAULT_EST_DG)
             .estMenbreCA(DEFAULT_EST_MENBRE_CA);
         return livreur;
@@ -102,7 +107,7 @@ class LivreurResourceIT {
             .email(UPDATED_EMAIL)
             .phoneNumber(UPDATED_PHONE_NUMBER)
             .commissions(UPDATED_COMMISSIONS)
-            .nbEtoiles(UPDATED_NB_ETOILES)
+            .evaluation(UPDATED_EVALUATION)
             .estDG(UPDATED_EST_DG)
             .estMenbreCA(UPDATED_EST_MENBRE_CA);
         return livreur;
@@ -118,8 +123,9 @@ class LivreurResourceIT {
     void createLivreur() throws Exception {
         int databaseSizeBeforeCreate = livreurRepository.findAll().size();
         // Create the Livreur
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
         restLivreurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreur)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreurDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Livreur in the database
@@ -131,7 +137,7 @@ class LivreurResourceIT {
         assertThat(testLivreur.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testLivreur.getPhoneNumber()).isEqualTo(DEFAULT_PHONE_NUMBER);
         assertThat(testLivreur.getCommissions()).isEqualTo(DEFAULT_COMMISSIONS);
-        assertThat(testLivreur.getNbEtoiles()).isEqualTo(DEFAULT_NB_ETOILES);
+        assertThat(testLivreur.getEvaluation()).isEqualTo(DEFAULT_EVALUATION);
         assertThat(testLivreur.getEstDG()).isEqualTo(DEFAULT_EST_DG);
         assertThat(testLivreur.getEstMenbreCA()).isEqualTo(DEFAULT_EST_MENBRE_CA);
     }
@@ -141,12 +147,13 @@ class LivreurResourceIT {
     void createLivreurWithExistingId() throws Exception {
         // Create the Livreur with an existing ID
         livreur.setId(1L);
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
 
         int databaseSizeBeforeCreate = livreurRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restLivreurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreur)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreurDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Livreur in the database
@@ -156,15 +163,16 @@ class LivreurResourceIT {
 
     @Test
     @Transactional
-    void checkPrenomIsRequired() throws Exception {
+    void checkNomIsRequired() throws Exception {
         int databaseSizeBeforeTest = livreurRepository.findAll().size();
         // set the field null
-        livreur.setPrenom(null);
+        livreur.setNom(null);
 
         // Create the Livreur, which fails.
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
 
         restLivreurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreur)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreurDTO)))
             .andExpect(status().isBadRequest());
 
         List<Livreur> livreurList = livreurRepository.findAll();
@@ -179,9 +187,10 @@ class LivreurResourceIT {
         livreur.setEmail(null);
 
         // Create the Livreur, which fails.
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
 
         restLivreurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreur)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreurDTO)))
             .andExpect(status().isBadRequest());
 
         List<Livreur> livreurList = livreurRepository.findAll();
@@ -196,9 +205,10 @@ class LivreurResourceIT {
         livreur.setPhoneNumber(null);
 
         // Create the Livreur, which fails.
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
 
         restLivreurMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreur)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreurDTO)))
             .andExpect(status().isBadRequest());
 
         List<Livreur> livreurList = livreurRepository.findAll();
@@ -222,7 +232,7 @@ class LivreurResourceIT {
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
             .andExpect(jsonPath("$.[*].phoneNumber").value(hasItem(DEFAULT_PHONE_NUMBER)))
             .andExpect(jsonPath("$.[*].commissions").value(hasItem(DEFAULT_COMMISSIONS.doubleValue())))
-            .andExpect(jsonPath("$.[*].nbEtoiles").value(hasItem(DEFAULT_NB_ETOILES.doubleValue())))
+            .andExpect(jsonPath("$.[*].evaluation").value(hasItem(DEFAULT_EVALUATION.doubleValue())))
             .andExpect(jsonPath("$.[*].estDG").value(hasItem(DEFAULT_EST_DG.booleanValue())))
             .andExpect(jsonPath("$.[*].estMenbreCA").value(hasItem(DEFAULT_EST_MENBRE_CA.booleanValue())));
     }
@@ -244,7 +254,7 @@ class LivreurResourceIT {
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
             .andExpect(jsonPath("$.phoneNumber").value(DEFAULT_PHONE_NUMBER))
             .andExpect(jsonPath("$.commissions").value(DEFAULT_COMMISSIONS.doubleValue()))
-            .andExpect(jsonPath("$.nbEtoiles").value(DEFAULT_NB_ETOILES.doubleValue()))
+            .andExpect(jsonPath("$.evaluation").value(DEFAULT_EVALUATION.doubleValue()))
             .andExpect(jsonPath("$.estDG").value(DEFAULT_EST_DG.booleanValue()))
             .andExpect(jsonPath("$.estMenbreCA").value(DEFAULT_EST_MENBRE_CA.booleanValue()));
     }
@@ -274,15 +284,16 @@ class LivreurResourceIT {
             .email(UPDATED_EMAIL)
             .phoneNumber(UPDATED_PHONE_NUMBER)
             .commissions(UPDATED_COMMISSIONS)
-            .nbEtoiles(UPDATED_NB_ETOILES)
+            .evaluation(UPDATED_EVALUATION)
             .estDG(UPDATED_EST_DG)
             .estMenbreCA(UPDATED_EST_MENBRE_CA);
+        LivreurDTO livreurDTO = livreurMapper.toDto(updatedLivreur);
 
         restLivreurMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedLivreur.getId())
+                put(ENTITY_API_URL_ID, livreurDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedLivreur))
+                    .content(TestUtil.convertObjectToJsonBytes(livreurDTO))
             )
             .andExpect(status().isOk());
 
@@ -295,7 +306,7 @@ class LivreurResourceIT {
         assertThat(testLivreur.getEmail()).isEqualTo(UPDATED_EMAIL);
         assertThat(testLivreur.getPhoneNumber()).isEqualTo(UPDATED_PHONE_NUMBER);
         assertThat(testLivreur.getCommissions()).isEqualTo(UPDATED_COMMISSIONS);
-        assertThat(testLivreur.getNbEtoiles()).isEqualTo(UPDATED_NB_ETOILES);
+        assertThat(testLivreur.getEvaluation()).isEqualTo(UPDATED_EVALUATION);
         assertThat(testLivreur.getEstDG()).isEqualTo(UPDATED_EST_DG);
         assertThat(testLivreur.getEstMenbreCA()).isEqualTo(UPDATED_EST_MENBRE_CA);
     }
@@ -306,12 +317,15 @@ class LivreurResourceIT {
         int databaseSizeBeforeUpdate = livreurRepository.findAll().size();
         livreur.setId(count.incrementAndGet());
 
+        // Create the Livreur
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLivreurMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, livreur.getId())
+                put(ENTITY_API_URL_ID, livreurDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(livreur))
+                    .content(TestUtil.convertObjectToJsonBytes(livreurDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -326,12 +340,15 @@ class LivreurResourceIT {
         int databaseSizeBeforeUpdate = livreurRepository.findAll().size();
         livreur.setId(count.incrementAndGet());
 
+        // Create the Livreur
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLivreurMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(livreur))
+                    .content(TestUtil.convertObjectToJsonBytes(livreurDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -346,9 +363,12 @@ class LivreurResourceIT {
         int databaseSizeBeforeUpdate = livreurRepository.findAll().size();
         livreur.setId(count.incrementAndGet());
 
+        // Create the Livreur
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLivreurMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreur)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(livreurDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Livreur in the database
@@ -368,7 +388,7 @@ class LivreurResourceIT {
         Livreur partialUpdatedLivreur = new Livreur();
         partialUpdatedLivreur.setId(livreur.getId());
 
-        partialUpdatedLivreur.prenom(UPDATED_PRENOM).nom(UPDATED_NOM).commissions(UPDATED_COMMISSIONS).nbEtoiles(UPDATED_NB_ETOILES);
+        partialUpdatedLivreur.prenom(UPDATED_PRENOM).nom(UPDATED_NOM).commissions(UPDATED_COMMISSIONS).evaluation(UPDATED_EVALUATION);
 
         restLivreurMockMvc
             .perform(
@@ -387,7 +407,7 @@ class LivreurResourceIT {
         assertThat(testLivreur.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testLivreur.getPhoneNumber()).isEqualTo(DEFAULT_PHONE_NUMBER);
         assertThat(testLivreur.getCommissions()).isEqualTo(UPDATED_COMMISSIONS);
-        assertThat(testLivreur.getNbEtoiles()).isEqualTo(UPDATED_NB_ETOILES);
+        assertThat(testLivreur.getEvaluation()).isEqualTo(UPDATED_EVALUATION);
         assertThat(testLivreur.getEstDG()).isEqualTo(DEFAULT_EST_DG);
         assertThat(testLivreur.getEstMenbreCA()).isEqualTo(DEFAULT_EST_MENBRE_CA);
     }
@@ -410,7 +430,7 @@ class LivreurResourceIT {
             .email(UPDATED_EMAIL)
             .phoneNumber(UPDATED_PHONE_NUMBER)
             .commissions(UPDATED_COMMISSIONS)
-            .nbEtoiles(UPDATED_NB_ETOILES)
+            .evaluation(UPDATED_EVALUATION)
             .estDG(UPDATED_EST_DG)
             .estMenbreCA(UPDATED_EST_MENBRE_CA);
 
@@ -431,7 +451,7 @@ class LivreurResourceIT {
         assertThat(testLivreur.getEmail()).isEqualTo(UPDATED_EMAIL);
         assertThat(testLivreur.getPhoneNumber()).isEqualTo(UPDATED_PHONE_NUMBER);
         assertThat(testLivreur.getCommissions()).isEqualTo(UPDATED_COMMISSIONS);
-        assertThat(testLivreur.getNbEtoiles()).isEqualTo(UPDATED_NB_ETOILES);
+        assertThat(testLivreur.getEvaluation()).isEqualTo(UPDATED_EVALUATION);
         assertThat(testLivreur.getEstDG()).isEqualTo(UPDATED_EST_DG);
         assertThat(testLivreur.getEstMenbreCA()).isEqualTo(UPDATED_EST_MENBRE_CA);
     }
@@ -442,12 +462,15 @@ class LivreurResourceIT {
         int databaseSizeBeforeUpdate = livreurRepository.findAll().size();
         livreur.setId(count.incrementAndGet());
 
+        // Create the Livreur
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLivreurMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, livreur.getId())
+                patch(ENTITY_API_URL_ID, livreurDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(livreur))
+                    .content(TestUtil.convertObjectToJsonBytes(livreurDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -462,12 +485,15 @@ class LivreurResourceIT {
         int databaseSizeBeforeUpdate = livreurRepository.findAll().size();
         livreur.setId(count.incrementAndGet());
 
+        // Create the Livreur
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLivreurMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(livreur))
+                    .content(TestUtil.convertObjectToJsonBytes(livreurDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -482,9 +508,14 @@ class LivreurResourceIT {
         int databaseSizeBeforeUpdate = livreurRepository.findAll().size();
         livreur.setId(count.incrementAndGet());
 
+        // Create the Livreur
+        LivreurDTO livreurDTO = livreurMapper.toDto(livreur);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLivreurMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(livreur)))
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(livreurDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Livreur in the database

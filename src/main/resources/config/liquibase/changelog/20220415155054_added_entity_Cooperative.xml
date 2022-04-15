@@ -15,7 +15,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="nom" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_cooperative__nom" />
             </column>
             <column name="localisation" type="varchar(255)">
                 <constraints nullable="false" />

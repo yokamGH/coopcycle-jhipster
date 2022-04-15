@@ -2,8 +2,12 @@ package com.mycompany.coopcycle.service;
 
 import com.mycompany.coopcycle.domain.Cooperative;
 import com.mycompany.coopcycle.repository.CooperativeRepository;
+import com.mycompany.coopcycle.service.dto.CooperativeDTO;
+import com.mycompany.coopcycle.service.mapper.CooperativeMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,57 +24,57 @@ public class CooperativeService {
 
     private final CooperativeRepository cooperativeRepository;
 
-    public CooperativeService(CooperativeRepository cooperativeRepository) {
+    private final CooperativeMapper cooperativeMapper;
+
+    public CooperativeService(CooperativeRepository cooperativeRepository, CooperativeMapper cooperativeMapper) {
         this.cooperativeRepository = cooperativeRepository;
+        this.cooperativeMapper = cooperativeMapper;
     }
 
     /**
      * Save a cooperative.
      *
-     * @param cooperative the entity to save.
+     * @param cooperativeDTO the entity to save.
      * @return the persisted entity.
      */
-    public Cooperative save(Cooperative cooperative) {
-        log.debug("Request to save Cooperative : {}", cooperative);
-        return cooperativeRepository.save(cooperative);
+    public CooperativeDTO save(CooperativeDTO cooperativeDTO) {
+        log.debug("Request to save Cooperative : {}", cooperativeDTO);
+        Cooperative cooperative = cooperativeMapper.toEntity(cooperativeDTO);
+        cooperative = cooperativeRepository.save(cooperative);
+        return cooperativeMapper.toDto(cooperative);
     }
 
     /**
      * Update a cooperative.
      *
-     * @param cooperative the entity to save.
+     * @param cooperativeDTO the entity to save.
      * @return the persisted entity.
      */
-    public Cooperative update(Cooperative cooperative) {
-        log.debug("Request to save Cooperative : {}", cooperative);
-        return cooperativeRepository.save(cooperative);
+    public CooperativeDTO update(CooperativeDTO cooperativeDTO) {
+        log.debug("Request to save Cooperative : {}", cooperativeDTO);
+        Cooperative cooperative = cooperativeMapper.toEntity(cooperativeDTO);
+        cooperative = cooperativeRepository.save(cooperative);
+        return cooperativeMapper.toDto(cooperative);
     }
 
     /**
      * Partially update a cooperative.
      *
-     * @param cooperative the entity to update partially.
+     * @param cooperativeDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Cooperative> partialUpdate(Cooperative cooperative) {
-        log.debug("Request to partially update Cooperative : {}", cooperative);
+    public Optional<CooperativeDTO> partialUpdate(CooperativeDTO cooperativeDTO) {
+        log.debug("Request to partially update Cooperative : {}", cooperativeDTO);
 
         return cooperativeRepository
-            .findById(cooperative.getId())
+            .findById(cooperativeDTO.getId())
             .map(existingCooperative -> {
-                if (cooperative.getNom() != null) {
-                    existingCooperative.setNom(cooperative.getNom());
-                }
-                if (cooperative.getLocalisation() != null) {
-                    existingCooperative.setLocalisation(cooperative.getLocalisation());
-                }
-                if (cooperative.getNbAdherents() != null) {
-                    existingCooperative.setNbAdherents(cooperative.getNbAdherents());
-                }
+                cooperativeMapper.partialUpdate(existingCooperative, cooperativeDTO);
 
                 return existingCooperative;
             })
-            .map(cooperativeRepository::save);
+            .map(cooperativeRepository::save)
+            .map(cooperativeMapper::toDto);
     }
 
     /**
@@ -79,9 +83,9 @@ public class CooperativeService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Cooperative> findAll() {
+    public List<CooperativeDTO> findAll() {
         log.debug("Request to get all Cooperatives");
-        return cooperativeRepository.findAll();
+        return cooperativeRepository.findAll().stream().map(cooperativeMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -91,9 +95,9 @@ public class CooperativeService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Cooperative> findOne(Long id) {
+    public Optional<CooperativeDTO> findOne(Long id) {
         log.debug("Request to get Cooperative : {}", id);
-        return cooperativeRepository.findById(id);
+        return cooperativeRepository.findById(id).map(cooperativeMapper::toDto);
     }
 
     /**

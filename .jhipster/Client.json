@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220415155050",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "client",
   "fields": [
@@ -17,12 +17,13 @@
     {
       "fieldName": "email",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRules": ["required", "unique", "pattern"],
       "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
     },
     {
       "fieldName": "phoneNumber",
-      "fieldType": "String"
+      "fieldType": "String",
+      "fieldValidateRules": ["unique"]
     },
     {
       "fieldName": "estDG",

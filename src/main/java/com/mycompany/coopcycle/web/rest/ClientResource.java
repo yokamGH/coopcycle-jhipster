@@ -1,8 +1,8 @@
 package com.mycompany.coopcycle.web.rest;
 
-import com.mycompany.coopcycle.domain.Client;
 import com.mycompany.coopcycle.repository.ClientRepository;
 import com.mycompany.coopcycle.service.ClientService;
+import com.mycompany.coopcycle.service.dto.ClientDTO;
 import com.mycompany.coopcycle.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,17 +51,17 @@ public class ClientResource {
     /**
      * {@code POST  /clients} : Create a new client.
      *
-     * @param client the client to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new client, or with status {@code 400 (Bad Request)} if the client has already an ID.
+     * @param clientDTO the clientDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new clientDTO, or with status {@code 400 (Bad Request)} if the client has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/clients")
-    public ResponseEntity<Client> createClient(@Valid @RequestBody Client client) throws URISyntaxException {
-        log.debug("REST request to save Client : {}", client);
-        if (client.getId() != null) {
+    public ResponseEntity<ClientDTO> createClient(@Valid @RequestBody ClientDTO clientDTO) throws URISyntaxException {
+        log.debug("REST request to save Client : {}", clientDTO);
+        if (clientDTO.getId() != null) {
             throw new BadRequestAlertException("A new client cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Client result = clientService.save(client);
+        ClientDTO result = clientService.save(clientDTO);
         return ResponseEntity
             .created(new URI("/api/clients/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -71,23 +71,23 @@ public class ClientResource {
     /**
      * {@code PUT  /clients/:id} : Updates an existing client.
      *
-     * @param id the id of the client to save.
-     * @param client the client to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated client,
-     * or with status {@code 400 (Bad Request)} if the client is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the client couldn't be updated.
+     * @param id the id of the clientDTO to save.
+     * @param clientDTO the clientDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated clientDTO,
+     * or with status {@code 400 (Bad Request)} if the clientDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the clientDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/clients/{id}")
-    public ResponseEntity<Client> updateClient(
+    public ResponseEntity<ClientDTO> updateClient(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Client client
+        @Valid @RequestBody ClientDTO clientDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Client : {}, {}", id, client);
-        if (client.getId() == null) {
+        log.debug("REST request to update Client : {}, {}", id, clientDTO);
+        if (clientDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, client.getId())) {
+        if (!Objects.equals(id, clientDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -95,34 +95,34 @@ public class ClientResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Client result = clientService.update(client);
+        ClientDTO result = clientService.update(clientDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, client.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, clientDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /clients/:id} : Partial updates given fields of an existing client, field will ignore if it is null
      *
-     * @param id the id of the client to save.
-     * @param client the client to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated client,
-     * or with status {@code 400 (Bad Request)} if the client is not valid,
-     * or with status {@code 404 (Not Found)} if the client is not found,
-     * or with status {@code 500 (Internal Server Error)} if the client couldn't be updated.
+     * @param id the id of the clientDTO to save.
+     * @param clientDTO the clientDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated clientDTO,
+     * or with status {@code 400 (Bad Request)} if the clientDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the clientDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the clientDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/clients/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Client> partialUpdateClient(
+    public ResponseEntity<ClientDTO> partialUpdateClient(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Client client
+        @NotNull @RequestBody ClientDTO clientDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Client partially : {}, {}", id, client);
-        if (client.getId() == null) {
+        log.debug("REST request to partial update Client partially : {}, {}", id, clientDTO);
+        if (clientDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, client.getId())) {
+        if (!Objects.equals(id, clientDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -130,11 +130,11 @@ public class ClientResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Client> result = clientService.partialUpdate(client);
+        Optional<ClientDTO> result = clientService.partialUpdate(clientDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, client.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, clientDTO.getId().toString())
         );
     }
 
@@ -145,9 +145,9 @@ public class ClientResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of clients in body.
      */
     @GetMapping("/clients")
-    public ResponseEntity<List<Client>> getAllClients(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ClientDTO>> getAllClients(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Clients");
-        Page<Client> page = clientService.findAll(pageable);
+        Page<ClientDTO> page = clientService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -155,20 +155,20 @@ public class ClientResource {
     /**
      * {@code GET  /clients/:id} : get the "id" client.
      *
-     * @param id the id of the client to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the client, or with status {@code 404 (Not Found)}.
+     * @param id the id of the clientDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the clientDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/clients/{id}")
-    public ResponseEntity<Client> getClient(@PathVariable Long id) {
+    public ResponseEntity<ClientDTO> getClient(@PathVariable Long id) {
         log.debug("REST request to get Client : {}", id);
-        Optional<Client> client = clientService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(client);
+        Optional<ClientDTO> clientDTO = clientService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(clientDTO);
     }
 
     /**
      * {@code DELETE  /clients/:id} : delete the "id" client.
      *
-     * @param id the id of the client to delete.
+     * @param id the id of the clientDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/clients/{id}")

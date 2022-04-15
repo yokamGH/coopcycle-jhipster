@@ -3,8 +3,8 @@ import { ICooperative } from 'app/entities/cooperative/cooperative.model';
 
 export interface IRestaurateur {
   id?: number;
-  prenom?: string;
-  nom?: string | null;
+  prenom?: string | null;
+  nom?: string;
   email?: string;
   phoneNumber?: string;
   commissions?: number | null;
@@ -17,8 +17,8 @@ export interface IRestaurateur {
 export class Restaurateur implements IRestaurateur {
   constructor(
     public id?: number,
-    public prenom?: string,
-    public nom?: string | null,
+    public prenom?: string | null,
+    public nom?: string,
     public email?: string,
     public phoneNumber?: string,
     public commissions?: number | null,

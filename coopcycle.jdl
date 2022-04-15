@@ -1,3 +1,4 @@
+/*Entités*/
 entity Panier  {
 	dateCommande Instant required,
     adresseLivraison String required,
@@ -29,18 +30,18 @@ entity Menu {
 entity Client {
 	prenom String, 
     nom String required, 
-    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
-    phoneNumber String,
+    email String required unique pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
+    phoneNumber String unique,
     estDG Boolean,
     estMenbreCA Boolean
 }
 
 entity Restaurateur {
-	prenom String required, 
-    nom String, 
-    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
-    phoneNumber String required, 
-    commissions Float,
+	prenom String, 
+    nom String required, 
+    email String required unique pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
+    phoneNumber String required unique, 
+    commissions Float min(0),
     estDG Boolean,
     estMenbreCA Boolean 
 }
@@ -58,35 +59,40 @@ entity Restaurant {
 
 
 entity Livreur {
-	prenom String required, 
-    nom String, 
-    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
-    phoneNumber String required, 
+	prenom String, 
+    nom String required, 
+    email String required unique pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/), 
+    phoneNumber String required unique, 
     commissions Float min(0),
-    nbEtoiles Float min(0),
+    evaluation Float min(0),
     estDG Boolean,
     estMenbreCA Boolean
 }
 
 entity Cooperative {
-	nom String required, 
+	nom String required unique, 
     localisation String required,
     nbAdherents Integer min(0)
 }
 
+
+/*Relations*/
 relationship OneToMany {
-	Client{panier} to Panier{client},
-    Panier{commande} to Commande{panier},
-    Menu{commande} to Commande{menu},
-    Restaurant{menu} to Menu{restaurant},
-    Restaurateur{restaurant} to Restaurant{restaurateur},
-    Livreur{panier} to Panier{livreur},
-    Cooperative{restaurateur} to Restaurateur{cooperative},
-    Cooperative{client} to Client{cooperative},
-    Cooperative{livreur} to Livreur{cooperative},
+	Client to Panier{client}
+    Panier to Commande{panier}
+    Menu to Commande{menu}
+    Restaurant to Menu{restaurant}
+    Restaurateur to Restaurant{restaurateur}
+    Livreur to Panier{livreur}
+    Cooperative to Restaurateur{cooperative}
+    Cooperative to Client{cooperative}
+    Cooperative to Livreur{cooperative}
 }
 
-// Set service options to all classes
+// Ajout du design patern DTO
+dto all with mapstruct
+
+// Ajout des options de services à toutes les classes
 service * with serviceClass
-// Pagination
+// Ajout de la pagination
 paginate Panier, Client, Restaurateur, Livreur, Menu, Restaurant with pagination

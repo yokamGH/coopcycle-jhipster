@@ -1,14 +1,14 @@
 {
   "applications": "*",
   "changelogDate": "20220415155054",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "cooperative",
   "fields": [
     {
       "fieldName": "nom",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["required", "unique"]
     },
     {
       "fieldName": "localisation",

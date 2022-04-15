@@ -25,22 +25,23 @@ public class Restaurateur implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
-    @Column(name = "prenom", nullable = false)
+    @Column(name = "prenom")
     private String prenom;
 
-    @Column(name = "nom")
+    @NotNull
+    @Column(name = "nom", nullable = false)
     private String nom;
 
     @NotNull
     @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @NotNull
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
+    @DecimalMin(value = "0")
     @Column(name = "commissions")
     private Float commissions;
 

@@ -2,6 +2,8 @@ package com.mycompany.coopcycle.service;
 
 import com.mycompany.coopcycle.domain.Livreur;
 import com.mycompany.coopcycle.repository.LivreurRepository;
+import com.mycompany.coopcycle.service.dto.LivreurDTO;
+import com.mycompany.coopcycle.service.mapper.LivreurMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,72 +23,57 @@ public class LivreurService {
 
     private final LivreurRepository livreurRepository;
 
-    public LivreurService(LivreurRepository livreurRepository) {
+    private final LivreurMapper livreurMapper;
+
+    public LivreurService(LivreurRepository livreurRepository, LivreurMapper livreurMapper) {
         this.livreurRepository = livreurRepository;
+        this.livreurMapper = livreurMapper;
     }
 
     /**
      * Save a livreur.
      *
-     * @param livreur the entity to save.
+     * @param livreurDTO the entity to save.
      * @return the persisted entity.
      */
-    public Livreur save(Livreur livreur) {
-        log.debug("Request to save Livreur : {}", livreur);
-        return livreurRepository.save(livreur);
+    public LivreurDTO save(LivreurDTO livreurDTO) {
+        log.debug("Request to save Livreur : {}", livreurDTO);
+        Livreur livreur = livreurMapper.toEntity(livreurDTO);
+        livreur = livreurRepository.save(livreur);
+        return livreurMapper.toDto(livreur);
     }
 
     /**
      * Update a livreur.
      *
-     * @param livreur the entity to save.
+     * @param livreurDTO the entity to save.
      * @return the persisted entity.
      */
-    public Livreur update(Livreur livreur) {
-        log.debug("Request to save Livreur : {}", livreur);
-        return livreurRepository.save(livreur);
+    public LivreurDTO update(LivreurDTO livreurDTO) {
+        log.debug("Request to save Livreur : {}", livreurDTO);
+        Livreur livreur = livreurMapper.toEntity(livreurDTO);
+        livreur = livreurRepository.save(livreur);
+        return livreurMapper.toDto(livreur);
     }
 
     /**
      * Partially update a livreur.
      *
-     * @param livreur the entity to update partially.
+     * @param livreurDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Livreur> partialUpdate(Livreur livreur) {
-        log.debug("Request to partially update Livreur : {}", livreur);
+    public Optional<LivreurDTO> partialUpdate(LivreurDTO livreurDTO) {
+        log.debug("Request to partially update Livreur : {}", livreurDTO);
 
         return livreurRepository
-            .findById(livreur.getId())
+            .findById(livreurDTO.getId())
             .map(existingLivreur -> {
-                if (livreur.getPrenom() != null) {
-                    existingLivreur.setPrenom(livreur.getPrenom());
-                }
-                if (livreur.getNom() != null) {
-                    existingLivreur.setNom(livreur.getNom());
-                }
-                if (livreur.getEmail() != null) {
-                    existingLivreur.setEmail(livreur.getEmail());
-                }
-                if (livreur.getPhoneNumber() != null) {
-                    existingLivreur.setPhoneNumber(livreur.getPhoneNumber());
-                }
-                if (livreur.getCommissions() != null) {
-                    existingLivreur.setCommissions(livreur.getCommissions());
-                }
-                if (livreur.getNbEtoiles() != null) {
-                    existingLivreur.setNbEtoiles(livreur.getNbEtoiles());
-                }
-                if (livreur.getEstDG() != null) {
-                    existingLivreur.setEstDG(livreur.getEstDG());
-                }
-                if (livreur.getEstMenbreCA() != null) {
-                    existingLivreur.setEstMenbreCA(livreur.getEstMenbreCA());
-                }
+                livreurMapper.partialUpdate(existingLivreur, livreurDTO);
 
                 return existingLivreur;
             })
-            .map(livreurRepository::save);
+            .map(livreurRepository::save)
+            .map(livreurMapper::toDto);
     }
 
     /**
@@ -96,9 +83,9 @@ public class LivreurService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Livreur> findAll(Pageable pageable) {
+    public Page<LivreurDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Livreurs");
-        return livreurRepository.findAll(pageable);
+        return livreurRepository.findAll(pageable).map(livreurMapper::toDto);
     }
 
     /**
@@ -108,9 +95,9 @@ public class LivreurService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Livreur> findOne(Long id) {
+    public Optional<LivreurDTO> findOne(Long id) {
         log.debug("Request to get Livreur : {}", id);
-        return livreurRepository.findById(id);
+        return livreurRepository.findById(id).map(livreurMapper::toDto);
     }
 
     /**

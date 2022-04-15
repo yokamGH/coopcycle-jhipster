@@ -34,10 +34,10 @@ public class Client implements Serializable {
 
     @NotNull
     @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
     @Column(name = "est_dg")

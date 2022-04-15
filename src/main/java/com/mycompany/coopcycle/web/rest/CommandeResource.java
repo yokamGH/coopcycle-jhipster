@@ -1,8 +1,8 @@
 package com.mycompany.coopcycle.web.rest;
 
-import com.mycompany.coopcycle.domain.Commande;
 import com.mycompany.coopcycle.repository.CommandeRepository;
 import com.mycompany.coopcycle.service.CommandeService;
+import com.mycompany.coopcycle.service.dto.CommandeDTO;
 import com.mycompany.coopcycle.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,17 +45,17 @@ public class CommandeResource {
     /**
      * {@code POST  /commandes} : Create a new commande.
      *
-     * @param commande the commande to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new commande, or with status {@code 400 (Bad Request)} if the commande has already an ID.
+     * @param commandeDTO the commandeDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new commandeDTO, or with status {@code 400 (Bad Request)} if the commande has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/commandes")
-    public ResponseEntity<Commande> createCommande(@Valid @RequestBody Commande commande) throws URISyntaxException {
-        log.debug("REST request to save Commande : {}", commande);
-        if (commande.getId() != null) {
+    public ResponseEntity<CommandeDTO> createCommande(@Valid @RequestBody CommandeDTO commandeDTO) throws URISyntaxException {
+        log.debug("REST request to save Commande : {}", commandeDTO);
+        if (commandeDTO.getId() != null) {
             throw new BadRequestAlertException("A new commande cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Commande result = commandeService.save(commande);
+        CommandeDTO result = commandeService.save(commandeDTO);
         return ResponseEntity
             .created(new URI("/api/commandes/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -65,23 +65,23 @@ public class CommandeResource {
     /**
      * {@code PUT  /commandes/:id} : Updates an existing commande.
      *
-     * @param id the id of the commande to save.
-     * @param commande the commande to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated commande,
-     * or with status {@code 400 (Bad Request)} if the commande is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the commande couldn't be updated.
+     * @param id the id of the commandeDTO to save.
+     * @param commandeDTO the commandeDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated commandeDTO,
+     * or with status {@code 400 (Bad Request)} if the commandeDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the commandeDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/commandes/{id}")
-    public ResponseEntity<Commande> updateCommande(
+    public ResponseEntity<CommandeDTO> updateCommande(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Commande commande
+        @Valid @RequestBody CommandeDTO commandeDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Commande : {}, {}", id, commande);
-        if (commande.getId() == null) {
+        log.debug("REST request to update Commande : {}, {}", id, commandeDTO);
+        if (commandeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, commande.getId())) {
+        if (!Objects.equals(id, commandeDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -89,34 +89,34 @@ public class CommandeResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Commande result = commandeService.update(commande);
+        CommandeDTO result = commandeService.update(commandeDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, commande.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, commandeDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /commandes/:id} : Partial updates given fields of an existing commande, field will ignore if it is null
      *
-     * @param id the id of the commande to save.
-     * @param commande the commande to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated commande,
-     * or with status {@code 400 (Bad Request)} if the commande is not valid,
-     * or with status {@code 404 (Not Found)} if the commande is not found,
-     * or with status {@code 500 (Internal Server Error)} if the commande couldn't be updated.
+     * @param id the id of the commandeDTO to save.
+     * @param commandeDTO the commandeDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated commandeDTO,
+     * or with status {@code 400 (Bad Request)} if the commandeDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the commandeDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the commandeDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/commandes/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Commande> partialUpdateCommande(
+    public ResponseEntity<CommandeDTO> partialUpdateCommande(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Commande commande
+        @NotNull @RequestBody CommandeDTO commandeDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Commande partially : {}, {}", id, commande);
-        if (commande.getId() == null) {
+        log.debug("REST request to partial update Commande partially : {}, {}", id, commandeDTO);
+        if (commandeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, commande.getId())) {
+        if (!Objects.equals(id, commandeDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -124,11 +124,11 @@ public class CommandeResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Commande> result = commandeService.partialUpdate(commande);
+        Optional<CommandeDTO> result = commandeService.partialUpdate(commandeDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, commande.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, commandeDTO.getId().toString())
         );
     }
 
@@ -138,7 +138,7 @@ public class CommandeResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of commandes in body.
      */
     @GetMapping("/commandes")
-    public List<Commande> getAllCommandes() {
+    public List<CommandeDTO> getAllCommandes() {
         log.debug("REST request to get all Commandes");
         return commandeService.findAll();
     }
@@ -146,20 +146,20 @@ public class CommandeResource {
     /**
      * {@code GET  /commandes/:id} : get the "id" commande.
      *
-     * @param id the id of the commande to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the commande, or with status {@code 404 (Not Found)}.
+     * @param id the id of the commandeDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the commandeDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/commandes/{id}")
-    public ResponseEntity<Commande> getCommande(@PathVariable Long id) {
+    public ResponseEntity<CommandeDTO> getCommande(@PathVariable Long id) {
         log.debug("REST request to get Commande : {}", id);
-        Optional<Commande> commande = commandeService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(commande);
+        Optional<CommandeDTO> commandeDTO = commandeService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(commandeDTO);
     }
 
     /**
      * {@code DELETE  /commandes/:id} : delete the "id" commande.
      *
-     * @param id the id of the commande to delete.
+     * @param id the id of the commandeDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/commandes/{id}")

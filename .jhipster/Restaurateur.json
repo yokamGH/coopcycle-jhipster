@@ -1,33 +1,35 @@
 {
   "applications": "*",
   "changelogDate": "20220415155051",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "restaurateur",
   "fields": [
     {
       "fieldName": "prenom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nom",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "nom",
-      "fieldType": "String"
-    },
-    {
       "fieldName": "email",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRules": ["required", "unique", "pattern"],
       "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
     },
     {
       "fieldName": "phoneNumber",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["required", "unique"]
     },
     {
       "fieldName": "commissions",
-      "fieldType": "Float"
+      "fieldType": "Float",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
     },
     {
       "fieldName": "estDG",

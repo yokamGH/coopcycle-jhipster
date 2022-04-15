@@ -26,7 +26,7 @@ public class Cooperative implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "nom", nullable = false)
+    @Column(name = "nom", nullable = false, unique = true)
     private String nom;
 
     @NotNull
